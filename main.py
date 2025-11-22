@@ -6,8 +6,9 @@ def read_file(path):
         return f.read()
 
 if __name__ == "__main__":
+    
     code = read_file("examples/sample1.txt")
-
+    
     # 1. Lexer → convertir texto en tokens
     lexer = Lexer(code)
     tokens = lexer.tokenize()

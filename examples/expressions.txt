@@ -1,0 +1,12 @@
+x 🡨 0
+REPEAT
+    x 🡨 2
+    if (x = 5 + 2) then
+       begin
+        y 🡨 100 + x
+       end
+    else
+      begin
+        y 🡨 2
+    end
+UNTIL (x > x+1)
