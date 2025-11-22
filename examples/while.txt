@@ -1,4 +1,13 @@
-while (x > 5) do
-begin
-    y 🡨 1 
-end
+BEGIN
+REPEAT
+    x 🡨 2
+    if (x = 5) then
+       begin
+        y 🡨 100
+       end
+    else
+      begin
+        y 🡨 2
+    end
+UNTIL (x > 10)
+END
