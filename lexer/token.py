@@ -1,5 +1,3 @@
-# token.py
-
 class TokenType:
     # Palabras reservadas
     BEGIN = "BEGIN"
@@ -21,7 +19,13 @@ class TokenType:
     AND = "AND"
     OR = "OR"
     NOT = "NOT"
+
+    # Funciones de strings
     LENGTH = "LENGTH"
+    UPPER = "UPPER"
+    LOWER = "LOWER"
+    SUBSTRING = "SUBSTRING"
+    TRIM = "TRIM"
 
     # Otros tokens
     IDENT = "IDENT"  # nombres de variables, clases, objetos
@@ -47,6 +51,8 @@ class TokenType:
     RBRACKET = "RBRACKET"  # ]
     LPAREN = "LPAREN"  # (
     RPAREN = "RPAREN"  # )
+    LBRACE = "LBRACE"  # {
+    RBRACE = "RBRACE"  # }
 
     DOT = "DOT"  # .
     COMMA = "COMMA"  # ,
@@ -58,11 +64,11 @@ class TokenType:
 
 
 class Token:
-    def __init__(self, type_, value, line, col):
-        self.type = type_
+    def __init__(self, type, value, line, col):
+        self.type = type
         self.value = value
         self.line = line
         self.col = col
 
-    def __repr__(self):
+    def _repr_(self):
         return f"Token({self.type}, {self.value}, line={self.line}, col={self.col})"

@@ -23,7 +23,7 @@ class Parser:
         """Verifica que el token actual sea del tipo esperado y avanza"""
         if self.peek().type == type_:
             return self.advance()
-        raise Exception(f"Se esperaba {type_} y se encontrÃ³ {self.peek()}")
+        raise Exception(f"Se esperaba {type_} y se encontró {self.peek()}")
 
     def optional(self, type_):
         """Si el token actual es del tipo dado, lo consume y retorna; si no, retorna None"""
@@ -40,9 +40,30 @@ class Parser:
     # ENTRYPOINT
     # -----------------------------
     def parse(self):
-        """Punto de entrada principal del parser"""
+        """
+        Punto de entrada principal del parser.
+        Primero parsea las definiciones de clases, luego los statements.
+        """
+        classes = []
         statements = []
 
+        # Paso 1: Parsear definiciones de clases (deben estar antes del algoritmo)
+        while self.peek().type != TokenType.EOF:
+            self.skip_newlines()
+            if self.peek().type == TokenType.EOF:
+                break
+            
+            # Detectar si es una clase: IDENT seguido de LBRACE
+            if (self.peek().type == TokenType.IDENT and 
+                self.pos + 1 < len(self.tokens) and 
+                self.tokens[self.pos + 1].type == TokenType.LBRACE):
+                classes.append(self.parse_class_definition())
+                self.skip_newlines()
+            else:
+                # Ya terminaron las clases, salir del loop
+                break
+        
+        # Paso 2: Parsear los statements del algoritmo
         while self.peek().type != TokenType.EOF:
             self.skip_newlines()
             if self.peek().type == TokenType.EOF:
@@ -54,13 +75,47 @@ class Parser:
 
             self.skip_newlines()
 
-        return {"type": "program", "body": statements}
+        return {"type": "program", "classes": classes, "body": statements}
+
+    # -----------------------------
+    # DEFINICIÓN DE CLASES
+    # -----------------------------
+    def parse_class_definition(self):
+        """
+        Parsea definición de clase:
+        Casa {Area color propietario}
+        """
+        class_name = self.match(TokenType.IDENT)
+        self.match(TokenType.LBRACE)
+        
+        attributes = []
+        
+        # Leer atributos hasta encontrar }
+        while self.peek().type != TokenType.RBRACE and self.peek().type != TokenType.EOF:
+            self.skip_newlines()
+            
+            if self.peek().type == TokenType.IDENT:
+                attr = self.match(TokenType.IDENT)
+                attributes.append(attr.value)
+            elif self.peek().type == TokenType.RBRACE:
+                break
+            else:
+                if self.peek().type != TokenType.NEWLINE:
+                    self.advance()
+        
+        self.match(TokenType.RBRACE)
+        
+        return {
+            "type": "class_def",
+            "name": class_name.value,
+            "attributes": attributes
+        }
 
     # -----------------------------
     # STATEMENTS
     # -----------------------------
     def statement(self):
-        """Parsea un statement genÃ©rico"""
+        """Parsea un statement genérico"""
         tok = self.peek()
 
         if tok.type == TokenType.FOR:
@@ -74,7 +129,6 @@ class Parser:
         if tok.type == TokenType.REPEAT:
             return self.parse_repeat_until()
         if tok.type == TokenType.IDENT:
-            # Lookahead mÃ¡s sofisticado para distinguir casos
             return self.parse_ident_statement()
         if tok.type == TokenType.BEGIN:
             return self.parse_block()
@@ -83,66 +137,74 @@ class Parser:
 
     def parse_ident_statement(self):
         """
-        Distingue entre declaraciÃ³n y asignaciÃ³n basÃ¡ndose en lookahead.
-
-        Casos:
-        1. A[10]           â†’ declaraciÃ³n de arreglo
-        2. A[n..m]         â†’ declaraciÃ³n de arreglo con rango
-        3. i               â†’ declaraciÃ³n de variable simple
-        4. i ðŸ¡¨ 0           â†’ asignaciÃ³n
-        5. A[i] ðŸ¡¨ 5        â†’ asignaciÃ³n a elemento de arreglo
-        6. A[1..j] ðŸ¡¨ B    â†’ asignaciÃ³n a subarreglo
+        Distingue entre declaración y asignación basándose en lookahead.
         """
-        # Guardar posiciÃ³n para posible backtrack
         saved_pos = self.pos
+        ident = self.advance()
 
-        ident = self.advance()  # consumir el identificador
+        # Caso especial: declaración de objeto (Clase nombre_objeto)
+        if (ident.value[0].isupper() and 
+            self.peek().type == TokenType.IDENT and
+            self.peek().value[0].islower()):
+            self.pos = saved_pos
+            return self.parse_object_declaration()
 
-        # Si no hay nada mÃ¡s, es una declaraciÃ³n simple
+        # Si no hay nada más, es una declaración simple
         if self.peek().type in (TokenType.NEWLINE, TokenType.END, TokenType.EOF):
             return {"type": "var_decl", "name": ident.value}
 
-        # Si viene ASSIGN directamente, es asignaciÃ³n simple: i ðŸ¡¨ valor
+        # Si viene ASSIGN directamente, es asignación simple: i 🡨 valor
         if self.peek().type == TokenType.ASSIGN:
-            self.pos = saved_pos  # restaurar
+            self.pos = saved_pos
             return self.parse_assign()
 
-        # Si viene LBRACKET, necesitamos analizar mÃ¡s
-        if self.peek().type == TokenType.LBRACKET:
-            self.advance()  # consumir '['
+        # Si viene DOT, es acceso a campo de objeto: miCasa.Area
+        if self.peek().type == TokenType.DOT:
+            self.pos = saved_pos
+            return self.parse_assign()
 
-            # Parsear la expresiÃ³n dentro de los corchetes
+        # Si viene LBRACKET, necesitamos analizar más
+        if self.peek().type == TokenType.LBRACKET:
+            self.advance()
             expr = self.parse_expression()
 
-            # Verificar quÃ© viene despuÃ©s
             if self.peek().type == TokenType.RANGE:
-                # Es declaraciÃ³n con rango: A[n..m]
-                self.pos = saved_pos  # restaurar y parsear como declaraciÃ³n
+                self.pos = saved_pos
                 return self.parse_var_declaration()
             elif self.peek().type == TokenType.RBRACKET:
-                self.advance()  # consumir ']'
-
-                # Verificar quÃ© sigue despuÃ©s del ']'
+                self.advance()
                 next_tok = self.peek().type
 
                 if next_tok == TokenType.ASSIGN:
-                    # Es asignaciÃ³n: A[i] ðŸ¡¨ valor
                     self.pos = saved_pos
                     return self.parse_assign()
                 elif next_tok == TokenType.LBRACKET:
-                    # PodrÃ­a ser A[i][j] (asignaciÃ³n multidimensional)
-                    # o A[n][m] (declaraciÃ³n multidimensional)
-                    # Por ahora asumimos asignaciÃ³n
                     self.pos = saved_pos
                     return self.parse_assign()
                 else:
-                    # Es declaraciÃ³n: A[10] o A[n]
                     self.pos = saved_pos
                     return self.parse_var_declaration()
 
-        # Caso por defecto: declaraciÃ³n
+        # Caso por defecto: declaración
         self.pos = saved_pos
         return self.parse_var_declaration()
+
+    # -----------------------------
+    # DECLARACIÓN DE OBJETOS
+    # -----------------------------
+    def parse_object_declaration(self):
+        """
+        Parsea declaración de objetos:
+        Casa miCasa
+        """
+        class_name = self.match(TokenType.IDENT)
+        obj_name = self.match(TokenType.IDENT)
+        
+        return {
+            "type": "object_decl",
+            "class_name": class_name.value,
+            "name": obj_name.value
+        }
 
     # -----------------------------
     # ASSIGN
@@ -150,12 +212,26 @@ class Parser:
     def parse_assign(self):
         """
         Parsea asignaciones:
-        - var ðŸ¡¨ expr
-        - A[i] ðŸ¡¨ expr
-        - A[i..j] ðŸ¡¨ expr (asignaciÃ³n a un subarreglo)
+        - var 🡨 expr
+        - A[i] 🡨 expr
+        - obj.field 🡨 expr
         """
         ident = self.match(TokenType.IDENT)
-        target = self.parse_array_suffix({"type": "var", "value": ident.value})
+        target = {"type": "var", "value": ident.value}
+        
+        # Verificar si es acceso a campo: obj.field
+        if self.peek().type == TokenType.DOT:
+            self.advance()
+            field = self.match(TokenType.IDENT)
+            target = {
+                "type": "field_access",
+                "object": target,
+                "field": field.value
+            }
+        else:
+            # Verificar si es acceso a arreglo
+            target = self.parse_array_suffix(target)
+        
         self.match(TokenType.ASSIGN)
         expr = self.parse_expression()
         return {"type": "assign", "target": target, "expr": expr}
@@ -165,30 +241,23 @@ class Parser:
     # -----------------------------
     def parse_var_declaration(self):
         """
-        Parsea declaraciones de variables y arreglos:
-        - nombre
-        - nombre[tamaÃ±o]
-        - nombre[n..m] (declaraciÃ³n con rango)
-        - nombre[dim1][dim2]... (arreglos multidimensionales)
+        Parsea declaraciones de variables y arreglos
         """
         ident = self.match(TokenType.IDENT)
         node = {"type": "var_decl", "name": ident.value}
 
-        # Si tiene corchetes â†’ es un arreglo
         dims = []
         while self.peek().type == TokenType.LBRACKET:
-            self.advance()  # consumir '['
+            self.advance()
             dim_expr = self.parse_expression()
-
+            
             if self.peek().type == TokenType.RANGE:
-                # DeclaraciÃ³n con rango: nombre[n..m]
-                self.advance()  # consumir '..'
+                self.advance()
                 end_expr = self.parse_expression()
                 dims.append({"type": "range", "start": dim_expr, "end": end_expr})
             else:
-                # DeclaraciÃ³n simple: nombre[n]
                 dims.append({"type": "size", "value": dim_expr})
-
+            
             self.match(TokenType.RBRACKET)
 
         if dims:
@@ -201,10 +270,7 @@ class Parser:
     # CALL
     # -----------------------------
     def parse_call(self):
-        """
-        Parsea llamadas a procedimientos:
-        CALL nombre(arg1, arg2, ..., argN)
-        """
+        """Parsea llamadas a procedimientos"""
         self.match(TokenType.CALL)
         func = self.match(TokenType.IDENT)
         self.match(TokenType.LPAREN)
@@ -220,13 +286,7 @@ class Parser:
     # FOR
     # -----------------------------
     def parse_for(self):
-        """
-        Parsea ciclos FOR:
-        for var ðŸ¡¨ inicio to fin do
-            begin
-                ...
-            end
-        """
+        """Parsea ciclos FOR"""
         self.match(TokenType.FOR)
         var = self.match(TokenType.IDENT)
         self.match(TokenType.ASSIGN)
@@ -242,13 +302,7 @@ class Parser:
     # IF
     # -----------------------------
     def parse_if(self):
-        """
-        Parsea condicionales IF:
-        if (condiciÃ³n) then
-            begin ... end
-        else
-            begin ... end
-        """
+        """Parsea condicionales IF"""
         self.match(TokenType.IF)
         self.match(TokenType.LPAREN)
         cond = self.parse_expression()
@@ -257,23 +311,16 @@ class Parser:
         self.skip_newlines()
         then_block = self.parse_block()
         self.skip_newlines()
-
-        # El ELSE es obligatorio segÃºn la gramÃ¡tica del proyecto
         self.match(TokenType.ELSE)
         self.skip_newlines()
         else_block = self.parse_block()
-
         return {"type": "if", "cond": cond, "then": then_block, "else": else_block}
 
     # -----------------------------
     # WHILE
     # -----------------------------
     def parse_while(self):
-        """
-        Parsea ciclos WHILE:
-        while (condiciÃ³n) do
-            begin ... end
-        """
+        """Parsea ciclos WHILE"""
         self.match(TokenType.WHILE)
         self.match(TokenType.LPAREN)
         cond = self.parse_expression()
@@ -287,12 +334,7 @@ class Parser:
     # REPEAT UNTIL
     # -----------------------------
     def parse_repeat_until(self):
-        """
-        Parsea ciclos REPEAT:
-        repeat
-            ...
-        until (condiciÃ³n)
-        """
+        """Parsea ciclos REPEAT"""
         self.match(TokenType.REPEAT)
         self.skip_newlines()
         statements = []
@@ -311,14 +353,7 @@ class Parser:
     # BLOCK
     # -----------------------------
     def parse_block(self):
-        """
-        Parsea bloques:
-        begin
-            statement1
-            statement2
-            ...
-        end
-        """
+        """Parsea bloques begin...end"""
         self.skip_newlines()
         self.match(TokenType.BEGIN)
         statements = []
@@ -336,9 +371,7 @@ class Parser:
     # EXPRESSIONS
     # -----------------------------
     def parse_expression(self):
-        """
-        Parsea expresiones con operadores relacionales (<, >, =, â‰¤, â‰¥, â‰ )
-        """
+        """Parsea expresiones con operadores relacionales"""
         node = self.parse_additive()
         if self.peek().type in (TokenType.GT, TokenType.LT, TokenType.EQ,
                                 TokenType.LE, TokenType.GE, TokenType.NE):
@@ -357,7 +390,7 @@ class Parser:
         return node
 
     def parse_term(self):
-        """Parsea tÃ©rminos multiplicativos (*, /, mod, div)"""
+        """Parsea términos multiplicativos (*, /, mod, div)"""
         node = self.parse_factor()
         while self.peek().type in (TokenType.MULT, TokenType.DIV,
                                    TokenType.MOD, TokenType.DIV_INT):
@@ -367,66 +400,85 @@ class Parser:
         return node
 
     def parse_factor(self):
-        """
-        Parsea factores:
-        - nÃºmeros
-        - identificadores (con posible acceso a arreglos)
-        - expresiones entre parÃ©ntesis
-        """
+        """Parsea factores (números, strings, variables, funciones)"""
         tok = self.peek()
+        
+        # Números
         if tok.type == TokenType.NUMBER:
             self.advance()
             return {"type": "number", "value": tok.value}
+
+        # Strings
+        if tok.type == TokenType.STRING:
+            self.advance()
+            return {"type": "string", "value": tok.value}
+
+        # Booleanos
+        if tok.type == TokenType.TRUE:
+            self.advance()
+            return {"type": "boolean", "value": True}
+        
+        if tok.type == TokenType.FALSE:
+            self.advance()
+            return {"type": "boolean", "value": False}
+
+        # NULL
+        if tok.type == TokenType.NULL:
+            self.advance()
+            return {"type": "null", "value": None}
+
+        # Funciones de string: length, upper, lower, substring, trim
+        if tok.type in (TokenType.LENGTH, TokenType.UPPER, TokenType.LOWER, 
+                       TokenType.SUBSTRING, TokenType.TRIM):
+            func = self.advance()
+            self.match(TokenType.LPAREN)
+            args = [self.parse_expression()]
+            while self.optional(TokenType.COMMA):
+                args.append(self.parse_expression())
+            self.match(TokenType.RPAREN)
+            return {"type": "string_func", "func": func.type.lower(), "args": args}
+
+        # Identificadores
         if tok.type == TokenType.IDENT:
             ident = self.advance()
             node = {"type": "var", "value": ident.value}
+            
+            # Verificar si es acceso a campo: obj.field
+            if self.peek().type == TokenType.DOT:
+                self.advance()
+                field = self.match(TokenType.IDENT)
+                node = {
+                    "type": "field_access",
+                    "object": node,
+                    "field": field.value
+                }
+            
+            # Luego verificar acceso a arreglo
             return self.parse_array_suffix(node)
+
+        # Expresiones entre paréntesis
         if tok.type == TokenType.LPAREN:
             self.advance()
             expr = self.parse_expression()
             self.match(TokenType.RPAREN)
             return expr
+
         raise Exception(f"Factor inesperado en {tok}")
 
     # -----------------------------
-    # ARRAY ACCESS (CLAVE)
+    # ARRAY ACCESS
     # -----------------------------
     def parse_array_suffix(self, base):
-        """
-        Parsea sufijos de acceso a arreglos.
-
-        Ejemplos:
-        - A[i]           â†’ acceso a un elemento
-        - A[1..j]        â†’ acceso a un subarreglo (rango)
-        - A[i][j]        â†’ acceso multidimensional
-        - A[i..j][k]     â†’ combinaciÃ³n de rango y acceso
-
-        Retorna un AST con la estructura adecuada:
-        - array_access: para A[i]
-        - array_range: para A[1..j]
-        """
+        """Parsea sufijos de acceso a arreglos: A[i] o A[1..j]"""
         while self.optional(TokenType.LBRACKET):
             start = self.parse_expression()
-
-            # Verificar si es un rango (notaciÃ³n ..)
+            
             if self.optional(TokenType.RANGE):
-                # A[inicio..fin] â†’ subarreglo
                 end = self.parse_expression()
                 self.match(TokenType.RBRACKET)
-                base = {
-                    "type": "array_range",
-                    "array": base,
-                    "start": start,
-                    "end": end
-                }
+                base = {"type": "array_range", "array": base, "start": start, "end": end}
             else:
-                # A[Ã­ndice] â†’ acceso a elemento
                 self.match(TokenType.RBRACKET)
-                base = {
-                    "type": "array_access",
-                    "array": base,
-                    "index": start
-                }
-
+                base = {"type": "array_access", "array": base, "index": start}
+        
         return base
-

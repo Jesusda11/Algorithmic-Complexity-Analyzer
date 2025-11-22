@@ -1,0 +1,8 @@
+Casa {Area color propietario}
+
+begin
+    Casa miCasa
+    miCasa.Area 🡨 100
+    x 🡨 miCasa.Area + 50
+    miCasa.color 🡨 "rojo"
+end

@@ -1,0 +1,4 @@
+for i 🡨 1 to length(A) do
+    begin
+        x 🡨 2
+    end

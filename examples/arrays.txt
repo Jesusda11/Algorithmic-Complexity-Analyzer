@@ -1,0 +1,31 @@
+if (x) then
+begin
+    y 🡨 1
+    if (x) then
+    begin
+        while (x > 5) do
+        begin
+            y 🡨 1
+        end
+        y 🡨 1
+    end
+    else
+    begin
+        y 🡨 2
+    end
+    REPEAT
+    x 🡨 2
+    if (x = 5) then
+       begin
+        y 🡨 100
+       end
+    else
+      begin
+        y 🡨 2
+    end
+    UNTIL (x > 10)
+end
+else
+begin
+    y 🡨 2
+end

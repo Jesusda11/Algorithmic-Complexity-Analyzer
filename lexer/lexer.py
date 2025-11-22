@@ -33,7 +33,13 @@ class Lexer:
             "and": TokenType.AND,
             "or": TokenType.OR,
             "not": TokenType.NOT,
+            # Funciones de strings
             "length": TokenType.LENGTH,
+            "upper": TokenType.UPPER,
+            "lower": TokenType.LOWER,
+            "substring": TokenType.SUBSTRING,
+            "trim": TokenType.TRIM,
+            # Operadores especiales
             "mod": TokenType.MOD,
             "div": TokenType.DIV_INT
         }
@@ -146,6 +152,12 @@ class Lexer:
             if ch == ")":
                 self.advance()
                 return Token(TokenType.RPAREN, ")", self.line, self.col)
+            if ch == "{":
+                self.advance()
+                return Token(TokenType.LBRACE, "{", self.line, self.col)
+            if ch == "}":
+                self.advance()
+                return Token(TokenType.RBRACE, "}", self.line, self.col)
             if ch == ".":
                 self.advance()
                 # check range ..
@@ -203,4 +215,4 @@ class Lexer:
             tok = self.get_next_token()
 
         tokens.append(tok)
-        return tokens
+        return tokens 
