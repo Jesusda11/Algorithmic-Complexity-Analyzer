@@ -1,25 +1,19 @@
-from analyzer.parser import parse_pseudocode
-from analyzer.complexity import analyze_complexity
+from lexer.lexer import Lexer
+from analyzer.parser import Parser
 
-def main():
-    # Cargar pseudocódigo de ejemplo
-    with open("examples/sample1.txt", "r", encoding="utf-8") as f:
-        code = f.read()
-
-    print("=== PSEUDOCÓDIGO ===")
-    print(code)
-    print("====================\n")
-
-    # PARSER (paso 1)
-    structure = parse_pseudocode(code)
-    print("Estructura interna mínima:")
-    print(structure)
-
-    # ANALIZADOR DE COMPLEJIDAD (paso 2)
-    result = analyze_complexity(structure)
-    print("\nComplejidad estimada:")
-    print(result)
-
+def read_file(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
 
 if __name__ == "__main__":
-    main()
+    code = read_file("examples/sample1.txt")
+
+    # 1. Lexer → convertir texto en tokens
+    lexer = Lexer(code)
+    tokens = lexer.tokenize()
+
+    # 2. Parser → construir AST
+    parser = Parser(tokens)
+    ast = parser.parse()
+
+    print(ast)

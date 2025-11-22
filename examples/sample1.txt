@@ -1,6 +1,3 @@
-Algoritmo ejemploMinimal
-Inicio
-    Para i = 1 hasta n hacer
-        imprimir(i)
-    FinPara
-FinAlgoritmo
+for i 🡨 1 to 5 do begin
+    x 🡨 i
+end
