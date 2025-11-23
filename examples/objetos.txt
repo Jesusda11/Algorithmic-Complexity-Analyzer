@@ -1,8 +1,20 @@
-Casa {Area color propietario}
+Casa {Area Color Propietario}
 
-begin
-    Casa miCasa
-    miCasa.Area 🡨 100
-    x 🡨 miCasa.Area + 50
-    miCasa.color 🡨 "rojo"
-end
+Casa miCasa
+Case otraCasa
+
+x 🡨 10
+y 🡨 20
+
+miCasa.Area 🡨 100
+miCasa.Color 🡨 "Rojo"
+miCasa.Propietario 🡨 "Juan"
+otraCasa.Area 🡨 "jsj"
+
+A[0] 🡨 5
+B[i] 🡨 A[i] + 1
+
+BEGIN
+    x 🡨 x + 1
+    y 🡨 y * 2
+END

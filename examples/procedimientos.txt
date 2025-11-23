@@ -1,0 +1,13 @@
+procedure Suma(a, b, resultado)
+begin
+    resultado 🡨 a + b
+end
+
+begin
+    x 🡨 5
+    y 🡨 10
+    z 🡨 0
+    CALL Suma(x, y, z)
+end
+
+

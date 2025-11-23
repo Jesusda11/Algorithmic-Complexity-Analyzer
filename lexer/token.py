@@ -61,7 +61,13 @@ class TokenType:
     COMMENT = "COMMENT"
     NEWLINE = "NEWLINE"
     EOF = "EOF"
+    PROCEDURE = "PROCEDURE"
 
+    CEIL = "CEIL"  # ┌
+    CEIL_END = "CEIL_END"  # ┐
+
+    FLOOR = "FLOOR"  # └
+    FLOOR_END = "FLOOR_END"  # ┘
 
 class Token:
     def __init__(self, type, value, line, col):
@@ -70,5 +76,5 @@ class Token:
         self.line = line
         self.col = col
 
-    def _repr_(self):
+    def repr(self):
         return f"Token({self.type}, {self.value}, line={self.line}, col={self.col})"

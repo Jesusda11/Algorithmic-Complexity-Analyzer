@@ -1,0 +1,26 @@
+procedure BusquedaLineal(A[], n, objetivo, posicion)
+begin
+    posicion  1
+    i 🡨 1
+    encontrado 🡨 F
+    
+    for i 🡨 1 to n do
+    begin
+        if (A[i] = objetivo) then
+        begin
+            posicion 🡨 i
+            encontrado 🡨 T
+        end
+        else
+        begin
+            x 🡨 0
+        end
+    end
+end
+
+begin
+    A[100]
+    n 🡨 100
+    pos 🡨 0
+    CALL BusquedaLineal(A, n, 42, pos)
+end

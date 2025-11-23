@@ -1,31 +1,16 @@
-if (x) then
+for i 🡨 1 to 10 do
 begin
-    y 🡨 1
-    if (x) then
+    if (A[i] > 5) then
     begin
-        while (x > 5) do
-        begin
-            y 🡨 1
-        end
-        y 🡨 1
+        B[i] 🡨A[i] + 1
     end
     else
     begin
-        y 🡨 2
+        B[i] 🡨 0
     end
-    REPEAT
-    x 🡨 2
-    if (x = 5) then
-       begin
-        y 🡨 100
-       end
-    else
-      begin
-        y 🡨 2
-    end
-    UNTIL (x > 10)
 end
-else
+
+while (j < 10) do
 begin
-    y 🡨 2
+    j 🡨 j + 1
 end

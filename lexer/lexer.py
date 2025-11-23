@@ -1,5 +1,3 @@
-# lexer.py
-
 import re
 from .token import Token, TokenType
 
@@ -28,8 +26,8 @@ class Lexer:
             "call": TokenType.CALL,
             "class": TokenType.CLASS,
             "null": TokenType.NULL,
-            "t": TokenType.TRUE,
-            "f": TokenType.FALSE,
+            "T": TokenType.TRUE,
+            "F": TokenType.FALSE,
             "and": TokenType.AND,
             "or": TokenType.OR,
             "not": TokenType.NOT,
@@ -41,7 +39,9 @@ class Lexer:
             "trim": TokenType.TRIM,
             # Operadores especiales
             "mod": TokenType.MOD,
-            "div": TokenType.DIV_INT
+            "div": TokenType.DIV_INT,
+            "procedure": TokenType.PROCEDURE,
+
         }
 
     def peek(self):
@@ -203,6 +203,23 @@ class Lexer:
                 self.advance()
                 return Token(TokenType.DIV, "/", self.line, self.col)
 
+            # Operadores techo y piso
+            if ch == "┌":
+                self.advance()
+                return Token(TokenType.CEIL, "┌", self.line, self.col)
+
+            if ch == "┐":
+                self.advance()
+                return Token(TokenType.CEIL_END, "┐", self.line, self.col)
+
+            if ch == "└":
+                self.advance()
+                return Token(TokenType.FLOOR, "└", self.line, self.col)
+
+            if ch == "┘":
+                self.advance()
+                return Token(TokenType.FLOOR_END, "┘", self.line, self.col)
+
             raise Exception(f"Caracter inesperado '{ch}' en línea {self.line}, columna {self.col}")
 
         return Token(TokenType.EOF, "", self.line, self.col)
@@ -215,4 +232,4 @@ class Lexer:
             tok = self.get_next_token()
 
         tokens.append(tok)
-        return tokens 
+        return tokens

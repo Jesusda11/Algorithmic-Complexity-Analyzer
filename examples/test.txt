@@ -1,0 +1,52 @@
+procedure Suma(a, b, resultado)
+begin
+    resultado 🡨 a + b
+end
+
+begin
+    x 🡨 5
+    y 🡨 10
+    z 🡨 0
+end
+
+x 🡨 42
+texto 🡨 "Hola"
+bandera 🡨 TRUE
+nada 🡨 NULL
+
+A[10] 🡨 0
+
+Casa Casa1
+Casa1.Area 🡨 120
+Casa1.Color 🡨 "Rojo"
+Casa1.Propietario 🡨 "Juan"
+
+
+for i 🡨 1 to 5 do
+begin
+    A[i] 🡨 i * 2
+end
+
+while (x < 50) do
+begin
+    x 🡨 x + 5
+end
+
+repeat
+    y 🡨 y - 1
+until (y = 0)
+
+if (x > y) then
+begin
+    z 🡨 x - y
+end
+else
+begin
+    z 🡨 y - x
+end
+
+CALL Suma(x, y, z)
+
+longitud 🡨 LENGTH(texto)
+mayuscula 🡨 UPPER(texto)
+minuscula 🡨 LOWER(texto)

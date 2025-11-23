@@ -1,0 +1,21 @@
+n 🡨 3
+for i 🡨 1 to n do
+begin
+    A[i] 🡨 i * 2
+    for i 🡨 1 to n do
+    begin
+        A[i] 🡨 i * 2
+        for i 🡨 1 to n do
+        begin
+            A[i] 🡨 i * 2
+            for i 🡨 1 to n do
+            begin
+                A[i] 🡨 i * 2
+                for i 🡨 1 to n do
+                begin
+                    A[i] 🡨 i * 2
+                end
+            end
+        end
+    end
+end

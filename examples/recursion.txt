@@ -1,0 +1,16 @@
+procedure Factorial(n, resultado)
+begin
+    if (n = 0) then
+    begin
+        resultado 🡨 1
+    end
+    else
+    begin
+        CALL Factorial(n - 1, resultado)
+    end
+end
+
+begin
+    resultado 🡨 0
+    CALL Factorial(5, resultado)
+end
