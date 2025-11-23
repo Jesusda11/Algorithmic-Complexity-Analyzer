@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Analizador de Complejidad Computacional
-Pipeline completo: Lexer → Parser → Validación → Detección Recursión → Análisis Complejidad
-"""
-
 import json
 import sys
 from pathlib import Path
@@ -314,8 +307,4 @@ Uso desde línea de comandos:
 
 
 if __name__ == "__main__":
-    # Ejemplo directo (comentar el menú si usas esto)
-    # analyze_pseudocode("examples/procedimientos.txt", verbose=True, show_ast=False)
-    
-    # Menú interactivo
     main()

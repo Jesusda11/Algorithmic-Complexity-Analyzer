@@ -1,14 +1,37 @@
+def parse_var_declaration(self):
+    ident = self.match(TokenType.IDENT)
+    node = {"type": "var_decl", "name": ident.value}
+    dims = []
+    while self.peek().type == TokenType.LBRACKET:
+        self.advance()
+        dim_expr = self.parse_expression()
+
+        if self.peek().type == TokenType.RANGE:
+            self.advance()
+            end_expr = self.parse_expression()
+            dims.append({"type": "range", "start": dim_expr, "end": end_expr})
+        else:
+            dims.append({"type": "size", "value": dim_expr})
+
+        self.match(TokenType.RBRACKET)
+
+    if dims:
+        node["type"] = "array_decl"
+        node["dims"] = dims
+
+    return node
+
+
 from lexer.token import TokenType
-
-
 class Parser:
+
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos = 0
-
     # -----------------------------
     # UTILIDADES
     # -----------------------------
+
     def peek(self):
         return self.tokens[self.pos]
 
@@ -20,7 +43,14 @@ class Parser:
     def match(self, type_):
         if self.peek().type == type_:
             return self.advance()
-        raise Exception(f"Se esperaba {type_} y se encontró {self.peek()}")
+
+        # MEJORAR EL MENSAJE DE ERROR:
+        current = self.peek()
+        raise Exception(
+            f"Se esperaba {type_}, "
+            f"pero se encontró {current.type} = '{current.value}' "
+            f"en línea {current.line}, columna {current.col}"
+        )
 
     def optional(self, type_):
         if self.peek().type == type_:
@@ -30,19 +60,26 @@ class Parser:
     def skip_newlines(self):
         while self.peek().type == TokenType.NEWLINE:
             self.advance()
-
     # -----------------------------
     # ENTRYPOINT
     # -----------------------------
+
     def parse(self):
         classes = []
         procedures = []
+        graphs = []
         statements = []
 
         while self.peek().type != TokenType.EOF:
             self.skip_newlines()
             if self.peek().type == TokenType.EOF:
                 break
+
+            # NUEVO: Detectar declaración de grafo
+            if self.peek().type == TokenType.GRAFO:
+                graphs.append(self.parse_graph_declaration())
+                self.skip_newlines()
+                continue
 
             # Clase: IDENT + LBRACE
             if (self.peek().type == TokenType.IDENT and
@@ -73,12 +110,13 @@ class Parser:
             "type": "program",
             "classes": classes,
             "procedures": procedures,
+            "graphs": graphs,  # NUEVO: incluir grafos en el AST
             "body": statements
         }
-
     # -----------------------------
     # CLASES
     # -----------------------------
+
     def parse_class_definition(self):
         class_name = self.match(TokenType.IDENT)
         self.match(TokenType.LBRACE)
@@ -101,10 +139,10 @@ class Parser:
             "name": class_name.value,
             "attributes": attributes
         }
-
     # -----------------------------
     # PROCEDURES
     # -----------------------------
+
     def parse_procedure_declaration(self):
         self.match(TokenType.PROCEDURE)
         name = self.match(TokenType.IDENT)
@@ -173,10 +211,10 @@ class Parser:
             return {"type": "array_param", "name": param_name, "dims": dims}
         else:
             return {"type": "primitive_param", "name": param_name}
-
     # -----------------------------
     # STATEMENTS
     # -----------------------------
+
     def statement(self):
         tok = self.peek()
 
@@ -241,10 +279,10 @@ class Parser:
 
         self.pos = saved_pos
         return self.parse_var_declaration()
-
     # -----------------------------
     # OBJETOS
     # -----------------------------
+
     def parse_object_declaration(self):
         class_name = self.match(TokenType.IDENT)
         obj_name = self.match(TokenType.IDENT)
@@ -253,10 +291,10 @@ class Parser:
             "class_name": class_name.value,
             "name": obj_name.value
         }
-
     # -----------------------------
     # ASSIGN
     # -----------------------------
+
     def parse_assign(self):
         ident = self.match(TokenType.IDENT)
         target = {"type": "var", "value": ident.value}
@@ -275,10 +313,9 @@ class Parser:
         self.match(TokenType.ASSIGN)
         expr = self.parse_expression()
         return {"type": "assign", "target": target, "expr": expr}
-
     # -----------------------------
     # VAR / ARRAY DECLARATION
-    # -----------------------------
+
     def parse_var_declaration(self):
         ident = self.match(TokenType.IDENT)
         node = {"type": "var_decl", "name": ident.value}
@@ -302,7 +339,6 @@ class Parser:
             node["dims"] = dims
 
         return node
-
     # -----------------------------
     # CALL
     # -----------------------------
@@ -324,6 +360,7 @@ class Parser:
             "name": proc_name.value,
             "args": args
         }
+    # -----------------------------
 
     # -----------------------------
     # FOR
@@ -565,7 +602,7 @@ class Parser:
             return {"type": "floor", "expr": expr}
 
 
-        raise Exception(f"Factor inesperado en {tok}")
+        raise Exception(f"Factor inesperado: {tok.type} = '{tok.value}' en línea {tok.line}, columna {tok.col}")
 
     # -----------------------------
     # ARRAY ACCESS
@@ -591,3 +628,130 @@ class Parser:
                 }
 
         return base
+
+    def parse_graph_declaration(self):
+        """
+        Sintaxis:
+        grafo nombreGrafo {
+            nodos 🡨 5
+            aristas 🡨 [[0,1], [1,2]]
+            pesos 🡨 [10, 20]
+            dirigido 🡨 T
+        }
+        """
+        self.match(TokenType.GRAFO)
+        graph_name = self.match(TokenType.IDENT)
+        self.match(TokenType.LBRACE)
+        self.skip_newlines()
+
+        properties = {
+            "nodos": None,
+            "aristas": [],
+            "pesos": [],
+            "dirigido": False
+        }
+
+        while self.peek().type != TokenType.RBRACE and self.peek().type != TokenType.EOF:
+            self.skip_newlines()
+
+            if self.peek().type == TokenType.RBRACE:
+                break
+
+            prop_name = self.peek()
+
+            # nodos 🡨 N
+            if prop_name.type == TokenType.NODOS:
+                self.advance()
+                self.match(TokenType.ASSIGN)  # SOLO 🡨
+                properties["nodos"] = self.parse_expression()
+
+            # aristas 🡨 [[0,1], [1,2]]
+            elif prop_name.type == TokenType.ARISTAS:
+                self.advance()
+                self.match(TokenType.ASSIGN)  # SOLO 🡨
+                properties["aristas"] = self.parse_edge_list()
+
+            # pesos 🡨 [10, 20]
+            elif prop_name.type == TokenType.PESOS:
+                self.advance()
+                self.match(TokenType.ASSIGN)  # SOLO 🡨
+                properties["pesos"] = self.parse_weight_list()
+
+            # dirigido 🡨 T o F
+            elif prop_name.type == TokenType.DIRIGIDO:
+                self.advance()
+                self.match(TokenType.ASSIGN)  # SOLO 🡨
+                dir_expr = self.parse_expression()
+                if dir_expr["type"] == "boolean":
+                    properties["dirigido"] = dir_expr["value"]
+
+            else:
+                # Saltar tokens desconocidos
+                self.advance()
+
+            self.skip_newlines()
+
+        self.match(TokenType.RBRACE)
+
+        return {
+            "type": "graph_decl",
+            "name": graph_name.value,
+            "nodos": properties["nodos"],
+            "aristas": properties["aristas"],
+            "pesos": properties["pesos"],
+            "dirigido": properties["dirigido"]
+        }
+
+    def parse_edge_list(self):
+        """Parsear: [[0,1], [1,2], [2,3]]"""
+        self.match(TokenType.LBRACKET)
+        edges = []
+
+        while self.peek().type != TokenType.RBRACKET and self.peek().type != TokenType.EOF:
+            self.skip_newlines()
+
+            if self.peek().type == TokenType.RBRACKET:
+                break
+
+            # Cada arista: [origen, destino]
+            self.match(TokenType.LBRACKET)
+            origin = self.parse_expression()
+            self.match(TokenType.COMMA)
+            dest = self.parse_expression()
+            self.match(TokenType.RBRACKET)
+
+            edges.append({
+                "origin": origin,
+                "dest": dest
+            })
+
+            # Coma opcional entre aristas
+            if self.peek().type == TokenType.COMMA:
+                self.advance()
+
+            self.skip_newlines()
+
+        self.match(TokenType.RBRACKET)
+        return edges
+
+    def parse_weight_list(self):
+        """Parsear: [10, 20, 30]"""
+        self.match(TokenType.LBRACKET)
+        weights = []
+
+        while self.peek().type != TokenType.RBRACKET and self.peek().type != TokenType.EOF:
+            self.skip_newlines()
+
+            if self.peek().type == TokenType.RBRACKET:
+                break
+
+            weight = self.parse_expression()
+            weights.append(weight)
+
+            if self.peek().type == TokenType.COMMA:
+                self.advance()
+
+            self.skip_newlines()
+
+        self.match(TokenType.RBRACKET)
+        return weights

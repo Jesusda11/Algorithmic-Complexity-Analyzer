@@ -1,6 +1,6 @@
 procedure BusquedaLineal(A[], n, objetivo, posicion)
 begin
-    posicion  1
+    posicion 🡨 1
     i 🡨 1
     encontrado 🡨 F
     
