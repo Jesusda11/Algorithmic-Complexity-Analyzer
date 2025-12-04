@@ -75,6 +75,8 @@ class TokenType:
     PESOS = "PESOS"
     DIRIGIDO = "DIRIGIDO"
 
+    RETURN = "RETURN"  # RETURN statement
+
 class Token:
     def __init__(self, type, value, line, col):
         self.type = type

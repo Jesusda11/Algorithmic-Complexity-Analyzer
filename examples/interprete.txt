@@ -1,0 +1,60 @@
+procedure MergeSort(A[1..n], inicio, fin)
+begin
+    if (inicio < fin) then
+    begin
+        medio 🡨 (inicio + fin) div 2
+        
+        CALL MergeSort(A, inicio, medio)
+        CALL MergeSort(A, medio + 1, fin)
+        CALL Merge(A, inicio, medio, fin)
+    end
+end
+
+procedure Merge(A[1..n], inicio, medio, fin)
+begin
+    i 🡨 inicio
+    j 🡨 medio + 1
+    k 🡨 inicio
+    
+    tamano 🡨 fin - inicio + 1
+    Temp[tamano]
+    
+    while (i <= medio and j <= fin) do
+    begin
+        if (A[i] <= A[j]) then
+        begin
+            Temp[k] 🡨 A[i]
+            i 🡨 i + 1
+        end
+        else
+        begin
+            Temp[k] 🡨 A[j]
+            j 🡨 j + 1
+        end
+        k 🡨 k + 1
+    end
+    
+    while (i <= medio) do
+    begin
+        Temp[k] 🡨 A[i]
+        i 🡨 i + 1
+        k 🡨 k + 1
+    end
+    
+    while (j <= fin) do
+    begin
+        Temp[k] 🡨 A[j]
+        j 🡨 j + 1
+        k 🡨 k + 1
+    end
+    
+    for i 🡨 inicio to fin do
+    begin
+        A[i] 🡨 Temp[i]
+    end
+end
+
+begin
+    A[100]
+    CALL MergeSort(A, 1, 100)
+end

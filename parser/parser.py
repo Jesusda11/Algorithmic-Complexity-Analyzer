@@ -39,6 +39,14 @@ class Parser:
         tok = self.tokens[self.pos]
         self.pos += 1
         return tok
+    
+    def parse_return(self):
+        self.match(TokenType.RETURN)
+        expr = self.parse_expression()
+        return {
+            "type": "return",
+            "expr": expr
+        }
 
     def match(self, type_):
         if self.peek().type == type_:
@@ -224,6 +232,8 @@ class Parser:
             return self.parse_if()
         if tok.type == TokenType.CALL:
             return self.parse_call()
+        if tok.type == TokenType.RETURN:   # <--- agregar esto
+            return self.parse_return()
         if tok.type == TokenType.WHILE:
             return self.parse_while()
         if tok.type == TokenType.REPEAT:
