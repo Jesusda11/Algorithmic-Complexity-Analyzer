@@ -1,0 +1,38 @@
+► Grafo simple
+grafo test {
+    nodos 🡨 4
+    aristas 🡨 [[0,1], [1,2], [2,3]]
+    pesos 🡨 [10, 20, 30]
+    dirigido 🡨 F
+}
+
+► Arrays simples
+distancia[4]
+visitado[4]
+
+► Inicializar manualmente
+distancia[0] 🡨 0
+distancia[1] 🡨 999
+distancia[2] 🡨 999
+distancia[3] 🡨 999
+
+visitado[0] 🡨 F
+visitado[1] 🡨 F
+visitado[2] 🡨 F
+visitado[3] 🡨 F
+
+► Procesar nodos
+for i 🡨 0 to 3 do
+begin
+    if (distancia[i] < 999) then
+    begin
+        visitado[i] 🡨 T
+    end
+    else
+    begin
+        visitado[i] 🡨 F
+    end
+end
+
+► Resultado
+resultado 🡨 1

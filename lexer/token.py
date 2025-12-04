@@ -69,6 +69,12 @@ class TokenType:
     FLOOR = "FLOOR"  # └
     FLOOR_END = "FLOOR_END"  # ┘
 
+    GRAFO = "GRAFO"
+    NODOS = "NODOS"
+    ARISTAS = "ARISTAS"
+    PESOS = "PESOS"
+    DIRIGIDO = "DIRIGIDO"
+
 class Token:
     def __init__(self, type, value, line, col):
         self.type = type

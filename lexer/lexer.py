@@ -41,7 +41,12 @@ class Lexer:
             "mod": TokenType.MOD,
             "div": TokenType.DIV_INT,
             "procedure": TokenType.PROCEDURE,
-
+            # AGREGAR ESTAS 4 LÍNEAS:
+            "grafo": TokenType.GRAFO,
+            "nodos": TokenType.NODOS,
+            "aristas": TokenType.ARISTAS,
+            "pesos": TokenType.PESOS,
+            "dirigido": TokenType.DIRIGIDO,
         }
 
     def peek(self):
