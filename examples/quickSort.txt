@@ -1,0 +1,39 @@
+procedure QuickSort(A[1..n], bajo, alto)
+begin
+    if (bajo < alto) then
+    begin
+        pivotIndex 🡨 0
+        CALL Partition(A, bajo, alto, pivotIndex)
+        
+        CALL QuickSort(A, bajo, pivotIndex - 1)
+        CALL QuickSort(A, pivotIndex + 1, alto)
+    end
+end
+
+procedure Partition(A[1..n], bajo, alto, resultado)
+begin
+    pivot 🡨 A[alto]
+    i 🡨 bajo - 1
+    
+    for j 🡨 bajo to alto - 1 do
+    begin
+        if (A[j] < pivot) then
+        begin
+            i 🡨 i + 1
+            temp 🡨 A[i]
+            A[i] 🡨 A[j]
+            A[j] 🡨 temp
+        end
+    end
+    
+    temp 🡨 A[i + 1]
+    A[i + 1] 🡨 A[alto]
+    A[alto] 🡨 temp
+    
+    resultado 🡨 i + 1
+end
+
+begin
+    A[100]
+    CALL QuickSort(A, 1, 100)
+end

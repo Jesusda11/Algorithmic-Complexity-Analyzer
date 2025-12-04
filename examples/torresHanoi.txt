@@ -1,0 +1,18 @@
+procedure Hanoi(n, origen, destino, auxiliar, movimientos)
+begin
+    if (n = 1) then
+    begin
+        movimientos 🡨 movimientos + 1
+    end
+    else
+    begin
+        CALL Hanoi(n - 1, origen, auxiliar, destino, movimientos)
+        movimientos 🡨 movimientos + 1
+        CALL Hanoi(n - 1, auxiliar, destino, origen, movimientos)
+    end
+end
+
+begin
+    movimientos 🡨 0
+    CALL Hanoi(5, 1, 3, 2, movimientos)
+end

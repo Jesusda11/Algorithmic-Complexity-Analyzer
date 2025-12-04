@@ -1,11 +1,13 @@
-procedure BusquedaLineal(A[], n, objetivo, posicion)
+procedure BuscarPar(A[], n, posicion)
 begin
     posicion 🡨 -1
     encontrado 🡨 F
     
     for i 🡨 1 to n do
     begin
-        if (A[i] = objetivo) then
+        resto 🡨 A[i] mod 2
+        
+        if (resto = 0) then
         begin
             posicion 🡨 i
             encontrado 🡨 T
@@ -18,8 +20,9 @@ begin
 end
 
 begin
-    A[100]
+    numeros[100]
     n 🡨 100
     pos 🡨 0
-    CALL BusquedaLineal(A, n, 42, pos)
+    
+    CALL BuscarPar(numeros, n, pos)
 end

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Analizador de Complejidad Computacional
 Pipeline completo: Lexer → Parser → Validación → Detección Recursión → Análisis Complejidad
@@ -15,6 +13,7 @@ from parser.parser import Parser
 from semantic.validator import validate_pseudocode, SemanticError
 from analyzer.recursion import RecursionDetector
 from analyzer.complexity import ComplexityAnalyzer
+from analyzer.patterns import PatternClassifier, PatternType
 
 
 def read_file(path):
@@ -120,9 +119,11 @@ def analyze_pseudocode(filepath, verbose=True, show_ast=False):
             print(json.dumps(ast, indent=2, ensure_ascii=False))
         
         # ========================================
-        # FASE 3: VALIDACIÓN SEMÁNTICA
+        # FASE 3: VALIDACIÓN SEMÁNTICA (comentada)
         # ========================================
-        
+        # if verbose:
+        #     print_phase(3, "Validación Semántica")
+        # validate_pseudocode(ast)
         
         # ========================================
         # FASE 4: DETECCIÓN DE RECURSIÓN
@@ -150,7 +151,7 @@ def analyze_pseudocode(filepath, verbose=True, show_ast=False):
             else:
                 print("  (No hay procedimientos para analizar)")
         
-        # ========================================
+       # ========================================
         # FASE 5: ANÁLISIS DE COMPLEJIDAD
         # ========================================
         if verbose:
@@ -158,20 +159,77 @@ def analyze_pseudocode(filepath, verbose=True, show_ast=False):
         
         analyzer = ComplexityAnalyzer(ast, recursion_info)
         complexity = analyzer.analyze()
-        
+
+        # DEPURACIÓN: VER QUÉ TIENE per_procedure_analysis
+        print("\n" + "="*80)
+        print("DEPURACIÓN: ¿SE LLENÓ per_procedure_analysis?")
+        print("="*80)
+        if hasattr(complexity, 'per_procedure_analysis'):
+            print("SÍ EXISTE → Contenido:")
+            import pprint
+            pprint.pprint(complexity.per_procedure_analysis)
+            
+        else:
+            print("NO EXISTE EL ATRIBUTO")
+        print("="*80 + "\n")
+        # ========================================
+
+                # ========================================
+        # FASE 6: CLASIFICACIÓN DE PATRONES ALGORÍTMICOS
+        # ========================================
         if verbose:
-            print("✓ Análisis completado")
-            print(f"\n{complexity.explanation}")
-        
+            print_phase(6, "Detección de Patrones Algorítmicos Conocidos")
+
+            classifier = PatternClassifier()
+            patterns_found = False
+
+            if hasattr(complexity, 'per_procedure_analysis') and complexity.per_procedure_analysis:
+                for proc_name, data in complexity.per_procedure_analysis.items():
+                    rec_info = data["recursion_info"]
+                    relation = data["relation"]
+                    solution = data["solution"]
+
+                    classification = classifier.classify(
+                        func_name=proc_name,
+                        recursion_info=rec_info,
+                        recurrence_solution=solution,
+                        recurrence_relation=relation
+                    )
+
+                    if classification.pattern != PatternType.UNKNOWN:
+                        patterns_found = True
+                        classifier.print_classification(classification, proc_name)
+                    else:
+                        if rec_info.is_recursive:
+                            print(f"\nPatrón en {proc_name}:")
+                            print(f"   → No se reconoció un patrón clásico")
+                            print(f"   → Complejidad estimada: {solution.complexity}")
+
+                # Mensaje final bonito
+                if patterns_found:
+                    print("\n¡Patrón algorítmico clásico detectado con éxito!")
+                elif any(info.is_recursive for info in recursion_info.values()):
+                    print("\nNo se detectaron patrones clásicos conocidos")
+                    print("   (Puede ser un algoritmo original, variante o muy optimizado)")
+            else:
+                print("No hay análisis por procedimiento disponible")
+                print("   (Asegúrate de que self.per_procedure_analysis se llene en ComplexityAnalyzer)")
+
         # ========================================
         # RESULTADOS FINALES
         # ========================================
         if verbose:
             print_separator("RESULTADOS FINALES", "=")
-            print(f"\n🎯 Complejidad Computacional:")
+            print(f"\nComplejidad Computacional:")
             print(f"   • Peor caso (Big-O):     {complexity.big_o}")
             print(f"   • Mejor caso (Omega):    {complexity.omega}")
             print(f"   • Caso promedio (Theta): {complexity.theta}")
+
+            if complexity.recurrence_info:
+                print(f"\nRelaciones de Recurrencia Resueltas:")
+                for proc_name, sol in complexity.recurrence_info.items():
+                    print(f"   • {proc_name} → {sol['solution']}")
+
             print_separator("", "=")
         
         return {
@@ -259,6 +317,28 @@ def batch_mode(directory="examples"):
             print(f"      → O({comp.big_o})")
 
 
+def test_recurrence_solver():
+    """Ejecuta los tests del RecurrenceSolver"""
+    print_separator("TESTS DE RECURRENCE SOLVER")
+    print("\nEjecutando tests de relaciones de recurrencia...\n")
+    
+    try:
+        from analyzer.recurrence import run_all_tests
+        success = run_all_tests()
+        
+        if success:
+            print("\n✅ Todos los tests pasaron correctamente")
+        else:
+            print("\n❌ Algunos tests fallaron")
+        
+        return success
+    except Exception as e:
+        print(f"\n❌ Error al ejecutar tests: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
 def main():
     """Función principal con menú de opciones"""
     
@@ -277,7 +357,8 @@ Selecciona una opción:
 1. Analizar un archivo específico
 2. Analizar todos los archivos en /examples
 3. Modo interactivo
-4. Salir
+4. Ejecutar tests de RecurrenceSolver
+5. Salir
 
 Uso desde línea de comandos:
     python main.py <archivo.txt>          # Analizar un archivo
@@ -300,6 +381,9 @@ Uso desde línea de comandos:
                 interactive_mode()
             
             elif opcion == "4":
+                test_recurrence_solver()
+            
+            elif opcion == "5":
                 print("\n👋 ¡Hasta luego!")
                 break
             
@@ -314,8 +398,4 @@ Uso desde línea de comandos:
 
 
 if __name__ == "__main__":
-    # Ejemplo directo (comentar el menú si usas esto)
-    # analyze_pseudocode("examples/procedimientos.txt", verbose=True, show_ast=False)
-    
-    # Menú interactivo
     main()

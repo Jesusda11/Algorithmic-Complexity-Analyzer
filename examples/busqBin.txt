@@ -1,0 +1,33 @@
+procedure BusquedaBinaria(A[1..n], x, inicio, fin, resultado)
+begin
+    if (inicio > fin) then
+    begin
+        resultado 🡨 -1
+    end
+    else
+    begin
+        medio 🡨 (inicio + fin) div 2
+        
+        if (A[medio] = x) then
+        begin
+            resultado 🡨 medio
+        end
+        else
+        begin
+            if (x < A[medio]) then
+            begin
+                CALL BusquedaBinaria(A, x, inicio, medio - 1, resultado)
+            end
+            else
+            begin
+                CALL BusquedaBinaria(A, x, medio + 1, fin, resultado)
+            end
+        end
+    end
+end
+
+begin
+    A[10]
+    resultado 🡨 0
+    CALL BusquedaBinaria(A, 42, 1, 10, resultado)
+end

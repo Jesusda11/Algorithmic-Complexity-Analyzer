@@ -355,13 +355,26 @@ class Parser:
         cond = self.parse_expression()
         self.match(TokenType.RPAREN)
         self.match(TokenType.THEN)
+
         self.skip_newlines()
         then_block = self.parse_block()
         self.skip_newlines()
-        self.match(TokenType.ELSE)
-        self.skip_newlines()
-        else_block = self.parse_block()
-        return {"type": "if", "cond": cond, "then": then_block, "else": else_block}
+
+        # -------------------------
+        # ELSE opcional
+        # -------------------------
+        else_block = None
+        if self.peek().type == TokenType.ELSE:
+            self.advance()  # consumir ELSE
+            self.skip_newlines()
+            else_block = self.parse_block()
+
+        return {
+            "type": "if",
+            "cond": cond,
+            "then": then_block,
+            "else": else_block
+        }
 
     # -----------------------------
     # WHILE
@@ -531,6 +544,12 @@ class Parser:
 
         if tok.type == TokenType.IDENT:
             ident = self.advance()
+
+            if ident.value == "T":
+                return {"type": "boolean", "value": True}
+            if ident.value == "F":
+                return {"type": "boolean", "value": False}
+
             node = {"type": "var", "value": ident.value}
 
             if self.peek().type == TokenType.DOT:

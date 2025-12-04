@@ -1,13 +1,9 @@
-BEGIN
-REPEAT
-    x 🡨 2
-    if (x = 5) then
-       begin
-        y 🡨 100
-       end
-    else
-      begin
-        y 🡨 2
+begin
+begin
+    x 🡨 1
+    while (x < n) do
+    begin
+        x 🡨 x * 2  
     end
-UNTIL (x > 10)
-END
+end
+end

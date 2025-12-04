@@ -1,0 +1,17 @@
+procedure MCD(a, b, resultado)
+begin
+    if (b = 0) then
+    begin
+        resultado 🡨 a
+    end
+    else
+    begin
+        resto 🡨 a mod b
+        CALL MCD(b, resto, resultado)
+    end
+end
+
+begin
+    resultado 🡨 0
+    CALL MCD(48, 18, resultado)
+end

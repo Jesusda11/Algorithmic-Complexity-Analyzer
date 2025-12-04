@@ -1,0 +1,33 @@
+procedure PotenciaRapida(base, exponente, resultado)
+begin
+    if (exponente = 0) then
+    begin
+        resultado 🡨 1
+    end
+    else
+    begin
+        if (exponente = 1) then
+        begin
+            resultado 🡨 base
+        end
+        else
+        begin
+            mitad 🡨 0
+            CALL PotenciaRapida(base, exponente div 2, mitad)
+            
+            if (exponente mod 2 = 0) then
+            begin
+                resultado 🡨 mitad * mitad
+            end
+            else
+            begin
+                resultado 🡨 base * mitad * mitad
+            end
+        end
+    end
+end
+
+begin
+    resultado 🡨 0
+    CALL PotenciaRapida(2, 10, resultado)
+end

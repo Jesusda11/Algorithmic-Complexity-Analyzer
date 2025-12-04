@@ -169,25 +169,35 @@ class Lexer:
                 self.advance()
                 return Token(TokenType.COMMA, ",", self.line, self.col)
 
+            # ← NUEVO: Soporte directo para símbolos Unicode
+            if ch == "≤":
+                self.advance()
+                return Token(TokenType.LE, "≤", self.line, self.col)
+            
+            if ch == "≥":
+                self.advance()
+                return Token(TokenType.GE, "≥", self.line, self.col)
+            
+            if ch == "≠":
+                self.advance()
+                return Token(TokenType.NE, "≠", self.line, self.col)
+
             # Relational operators
             if ch == "<":
                 self.advance()
                 if self.peek() == "=":
                     self.advance()
-                    return Token(TokenType.LE, "≤", self.line, self.col)
+                    return Token(TokenType.LE, "<=", self.line, self.col)
                 return Token(TokenType.LT, "<", self.line, self.col)
             if ch == ">":
                 self.advance()
                 if self.peek() == "=":
                     self.advance()
-                    return Token(TokenType.GE, "≥", self.line, self.col)
+                    return Token(TokenType.GE, ">=", self.line, self.col)
                 return Token(TokenType.GT, ">", self.line, self.col)
             if ch == "=":
                 self.advance()
                 return Token(TokenType.EQ, "=", self.line, self.col)
-            if ch == "≠":
-                self.advance()
-                return Token(TokenType.NE, "≠", self.line, self.col)
 
             # Arithmetic
             if ch == "+":
