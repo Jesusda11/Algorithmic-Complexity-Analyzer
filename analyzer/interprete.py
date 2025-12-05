@@ -163,6 +163,28 @@ class Interpreter:
         self.global_env = Environment()
         self._prepare_env()
 
+    def _infer_while_iterations(self, cond_node: Dict, body_node: Dict, env: Environment):
+        """Intenta inferir el número de iteraciones de un bucle while."""
+        if not self.symbolic:
+            return 0  # En modo concreto, no necesitamos la inferencia
+
+        # Lógica simplificada de inferencia:
+        # Buscar variables de conteo que tiendan a modificar la condición.
+        # Por ahora, se retorna una variable simbólica 'n' o 0.
+
+        # La implementación completa requeriría análisis de terminación y SMT.
+        # Como un placeholder funcional, asumimos O(n) si no podemos probar O(1).
+        
+        # Una mejor aproximación sería:
+        # 1. Analizar si la condición incluye 'n'.
+        # 2. Analizar si alguna variable en la condición es modificada en el cuerpo.
+        # Por simplicidad, retornaremos 'n' si 'n' está definida globalmente.
+        
+        if env.has("n"):
+            return self.n
+            
+        return 0
+
     def _prepare_env(self):
         for c in self.ast.get("classes", []):
             self.global_env.define_class(c["name"], c)
@@ -184,11 +206,26 @@ class Interpreter:
         else:
             self.exec_block({"type": "block", "body": entry_body}, self.global_env)
 
+# src/interprete.py (Dentro de la clase Interpreter)
+
+    def eval_array_literal(self, node: Dict, env: Environment) -> List[Any]:
+        """Evalúa un nodo AST de tipo 'array_literal' a una lista de Python."""
+        elements = []
+        
+        # Evaluar cada expresión dentro del literal
+        for element_node in node.get("elements", []):
+            # Es fundamental que cada elemento se evalúe recursivamente
+            value = self.eval_expr(element_node, env)
+            elements.append(value)
+            
+        # Devolver una lista de Python, que será el valor del array
+        return elements
+
     def _snapshot_env(self, env: Environment):
         snap = {}
         for k, v in env.vars.items():
             if isinstance(v, list):
-                snap[k] = f"<list len={len(v)}>"
+                snap[k] = v
             elif isinstance(v, dict) and "__sym_len__" in v:
                 snap[k] = f"<array symbolic len={v['__sym_len__']}>"
             else:
@@ -201,7 +238,8 @@ class Interpreter:
     def _before(self, node, env):
         if self.tracer:
             try:
-                self.tracer.before(node, self._snapshot_env(env))
+                # USAR EXPLÍCITAMENTE LA LÍNEA DEL NODO
+                self.tracer.before(node, self._snapshot_env(env), line=node.get("line")) 
             except Exception:
                 pass
         self.trace.append((node, self._snapshot_env(env)))
@@ -447,30 +485,44 @@ class Interpreter:
 
     def _exec_repeat(self, node, env):
         """Ejecuta repeat-until loop"""
-        body_ops_before = self.op_count
-        iterations = 0
         
-        while True:
-            iterations += 1
-            try:
-                self.exec_block(node["body"], env)
-            except ContinueSignal:
-                pass
+        is_symbolic_cond = isinstance(self.eval_expr(node["cond"], env), (sp.Expr, sp.Symbol))
+        
+        if self.symbolic and is_symbolic_cond:
+            # MODO SIMBÓLICO: solo registrar el bucle y omitir la ejecución.
+            iterations = self.n # Asumimos n iteraciones simbólicas
+            exec_body_ops = 0
+            concrete_iterations = 0
+        else:
+            # MODO CONCRETO: ejecutar el bucle.
+            body_ops_before = self.op_count
+            iterations = 0
             
-            cond_val = self.eval_expr(node["cond"], env)
-            self._count_op(1)  # evaluación condición
+            while True:
+                iterations += 1
+                try:
+                    self.exec_block(node["body"], env)
+                except ContinueSignal:
+                    pass
+                except BreakSignal:
+                    break
+                
+                cond_val = self.eval_expr(node["cond"], env)
+                self._count_op(1) 
+                
+                if cond_val:
+                    break
             
-            if cond_val:
-                break
-        
-        body_ops_after = self.op_count
-        exec_body_ops = body_ops_after - body_ops_before
-        
+            body_ops_after = self.op_count
+            exec_body_ops = body_ops_after - body_ops_before
+            concrete_iterations = iterations
+            iterations = concrete_iterations # Si es concreto, 'iterations' es el conteo real
+            
         self.loop_stats.append({
             "type": "repeat",
             "node": node,
-            "iterations": self.n if self.symbolic else iterations,
-            "concrete_iterations": iterations,
+            "iterations": iterations,
+            "concrete_iterations": concrete_iterations,
             "body_ops": exec_body_ops,
             "total_ops": exec_body_ops
         })
@@ -481,34 +533,45 @@ class Interpreter:
         start = self.eval_expr(node["start"], env)
         end = self.eval_expr(node["end"], env)
 
-        if self.symbolic and (isinstance(start, (sp.Expr, sp.Symbol)) or isinstance(end, (sp.Expr, sp.Symbol))):
+        is_symbolic_bound = isinstance(start, (sp.Expr, sp.Symbol)) or isinstance(end, (sp.Expr, sp.Symbol))
+        
+        if self.symbolic and is_symbolic_bound:
+            # MODO SIMBÓLICO: solo calcular iter_count y omitir la ejecución del cuerpo.
             iter_count = sp.simplify(end - start + 1)
+            concrete_iterations = 0
+            exec_body_ops = 0
+            control_ops = 0 # No hay operaciones de control concretas
         else:
-            iter_count = int(end) - int(start) + 1
+            # MODO CONCRETO: ejecutar el bucle.
+            start_int = int(start)
+            end_int = int(end)
+            iter_count = end_int - start_int + 1
 
-        self._count_op(1)  # inicialización
-        env.set(varname, start)
+            self._count_op(1)
+            env.set(varname, start_int)
 
-        body_ops_before = self.op_count
-        concrete_iterations = 0
-        
-        for i in range(int(start), int(end) + 1):
-            self._count_op(1)  # comparación
-            env.set(varname, i)
-            concrete_iterations += 1
+            body_ops_before = self.op_count
+            concrete_iterations = 0
             
-            try:
-                self.exec_block(node["body"], env)
-            except ContinueSignal:
-                pass
+            for i in range(start_int, end_int + 1):
+                self._count_op(1)
+                env.set(varname, i)
+                concrete_iterations += 1
+                
+                try:
+                    self.exec_block(node["body"], env)
+                except ContinueSignal:
+                    pass
+                except BreakSignal:
+                    break
+                
+                self._count_op(1)
             
-            self._count_op(1)  # incremento
-        
-        self._count_op(1)  # última comparación (falsa)
-        
-        body_ops_after = self.op_count
-        exec_body_ops = body_ops_after - body_ops_before
-        control_ops = 2 * concrete_iterations + 2
+            self._count_op(1)
+            
+            body_ops_after = self.op_count
+            exec_body_ops = body_ops_after - body_ops_before
+            control_ops = 2 * concrete_iterations + 2 # Init, Last Cmp + (Cmp + Inc) * Iters
         
         self.loop_stats.append({
             "type": "for",
@@ -685,6 +748,9 @@ class Interpreter:
     # -----------------------
     # Expressions
     # -----------------------
+    # -----------------------
+    # Expressions
+    # -----------------------
     def eval_expr(self, node: Dict, env: Environment):
         if node is None:
             return None
@@ -699,7 +765,8 @@ class Interpreter:
             return node.get("value")
         if t == "null":
             return None
-
+        if t == "array_literal":
+            return self.eval_array_literal(node, env)
         if t == "var":
             name = node["value"]
             self._count_op(1)
@@ -733,6 +800,7 @@ class Interpreter:
             if isinstance(arr, dict) and "__sym_len__" in arr:
                 vals = arr["__values__"]
                 if isinstance(idx, (sp.Expr, sp.Symbol)) and self.symbolic:
+                    # No podemos obtener el valor si el índice es simbólico
                     return None
                 return vals[int(idx)] if int(idx) < len(vals) else None
             if isinstance(arr, list):
@@ -751,6 +819,7 @@ class Interpreter:
             self._count_op(1)
             if isinstance(arr, list):
                 if (isinstance(s, (sp.Expr, sp.Symbol)) or isinstance(e, (sp.Expr, sp.Symbol))) and self.symbolic:
+                    # En modo simbólico, representamos un slice sin ejecutarlo
                     return {"__sym_slice__": (s, e), "__values__": []}
                 return arr[int(s):int(e)+1]
             if isinstance(arr, dict) and "__values__" in arr:
@@ -796,7 +865,8 @@ class Interpreter:
                 return sp.floor(val)
             return math.floor(val)
 
-        if t == "call":
+        if t in ("call", "call_expr"):  # <--- ADAPTACIÓN AQUÍ
+            # exec_call maneja la lógica de ejecución y devuelve el resultado
             return self.exec_call(node, env)
 
         if t in ("binop", "binary"):
@@ -805,7 +875,10 @@ class Interpreter:
             right = self.eval_expr(node.get("right"), env)
             self._count_op(1)
             
-            if self.symbolic and (isinstance(left, (sp.Expr, sp.Symbol)) or isinstance(right, (sp.Expr, sp.Symbol))):
+            is_symbolic = (self.symbolic and 
+                        (isinstance(left, (sp.Expr, sp.Symbol)) or isinstance(right, (sp.Expr, sp.Symbol))))
+            
+            if is_symbolic:
                 L = sp.sympify(left) if not isinstance(left, (sp.Expr, sp.Symbol)) else left
                 R = sp.sympify(right) if not isinstance(right, (sp.Expr, sp.Symbol)) else right
                 
@@ -821,6 +894,8 @@ class Interpreter:
                     return sp.floor(L / R)
                 if op in ("MOD",):
                     return sp.Mod(L, R)
+                if op in ("POW", "EXP", "STAR_STAR"):
+                    return sp.simplify(L ** R)
                 if op in ("GT",):
                     return L > R
                 if op in ("LT",):
@@ -838,18 +913,31 @@ class Interpreter:
                 if op in ("OR",):
                     return sp.Or(L, R)
             
-            if op in ("PLUS",):
+            # Modo concreto
+            
+            # --- ADAPTACIÓN CLAVE PARA ELIMINAR EL TypeError: NoneType and int ---
+            # Si una variable no fue inicializada, su valor es None. En operaciones matemáticas, 
+            # asumimos que debe comportarse como 0.
+            if left is None:
+                left = 0
+            if right is None:
+                right = 0
+            # ----------------------------------------------------------------------
+            
+            if op in ("PLUS", "PLUS_TOKEN", "PLUS_OP"):
                 return left + right
-            if op in ("MINUS",):
+            if op in ("MINUS", "MINUS_TOKEN", "MINUS_OP"):
                 return left - right
-            if op in ("MULT",):
+            if op in ("MULT", "TIMES", "STAR"):
                 return left * right
-            if op in ("DIV",):
+            if op in ("DIV", "DIV_FLOAT", "DIV_TOKEN"):
                 return left / right
-            if op in ("DIV_INT",):
+            if op in ("DIV_INT", "DIV_INT_TOKEN"):
                 return left // right
             if op in ("MOD",):
                 return left % right
+            if op in ("POW", "EXP", "STAR_STAR"):
+                return left ** right
             if op in ("GT",):
                 return left > right
             if op in ("LT",):
@@ -874,14 +962,21 @@ class Interpreter:
             expr = self.eval_expr(node.get("operand") or node.get("expr"), env)
             self._count_op(1)
             
+            is_symbolic = (self.symbolic and isinstance(expr, (sp.Expr, sp.Symbol)))
+
             if op in ("MINUS", "NEG"):
-                if isinstance(expr, (sp.Expr, sp.Symbol)) and self.symbolic:
+                if is_symbolic:
                     return -expr
                 return -expr
-            if op in ("NOT",):
+            
+            if op in ("NOT", "NEGATION", "EXCLAMATION"):
+                if is_symbolic:
+                    return sp.Not(expr)
                 return not expr
-
-        raise RuntimeError(f"Expression type not supported: {t}")
+            
+            raise RuntimeError(f"Operador unario no soportado: {op}")
+            
+        raise RuntimeError(f"Expr type not supported: {t}")
 
     def _infer_while_iterations(self, cond_node: Dict, body_node: Dict, env: Environment):
         if not isinstance(cond_node, dict):

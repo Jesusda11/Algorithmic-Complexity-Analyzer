@@ -10,6 +10,7 @@ from parser.parser import Parser
 from analyzer.recursion import RecursionDetector
 from analyzer.complexity import ComplexityAnalyzer
 from analyzer.patterns import PatternClassifier
+from analyzer.execution_tracer import create_traced_interpreter
 
 from app.models.response_models import (
     AnalysisResponse, ComplexityResponse, RecursionInfoResponse,
@@ -30,7 +31,9 @@ class AnalysisService:
         code: str,
         include_ast: bool = False,
         include_tokens: bool = False,
-        enable_patterns: bool = True
+        enable_patterns: bool = True,
+        enable_tracing: bool = False,
+        symbolic: bool = True
     ) -> AnalysisResponse:
         """Analiza un pseudocódigo y retorna la complejidad computacional"""
         
@@ -93,14 +96,95 @@ class AnalysisService:
                 "has_recursion": any(info.is_recursive for info in recursion_info.values()),
                 "analysis_timestamp": time.time()
             }
-            
+            # Si se solicita trazado, ejecutar intérprete trazado y exportar info
+            execution_data = None
+            try:
+                if enable_tracing:
+                    interpreter, tracer = create_traced_interpreter(ast, symbolic=symbolic)
+                    try:
+                        interpreter.run()
+                    except Exception as e:
+                        # Propagar error para que se maneje arriba
+                        raise
+
+                    # Enriquecer metadata con métricas del intérprete si están disponibles
+                    try:
+                        metrics = interpreter.get_metrics()
+                        metadata.update({
+                            "op_count": metrics.get("op_count", 0),
+                            "loop_stats": metrics.get("loop_stats", []),
+                            "recursion_info": metrics.get("recursion_info", {}),
+                            "max_recursion_depth": metrics.get("max_recursion_depth", 0)
+                        })
+                    except Exception:
+                        pass
+
+                    execution_data = tracer.export_for_frontend()
+
+                    # Enriquecer el output de trazado con un mapa de calor procesado
+                    try:
+                        line_counts = execution_data.get("line_execution_count", {}) or {}
+                        if line_counts:
+                            # Convert keys to ints if they are strings
+                            lc = {int(k): v for k, v in line_counts.items()}
+                            max_count = max(lc.values()) if lc else 0
+                            # Normalizado 0..1, porcentaje y barras para Frontend ligero
+                            normalized = {str(k): (v / max_count) if max_count else 0 for k, v in lc.items()}
+                            percent = {str(k): round((v / max_count) * 100, 2) if max_count else 0.0 for k, v in lc.items()}
+                            bars = {str(k): "█" * (1 if max_count and v > 0 and int((v / max_count) * 50) == 0 else int((v / max_count) * 50)) for k, v in lc.items()}
+                            # Top lines
+                            top_lines = sorted(lc.items(), key=lambda x: x[1], reverse=True)[:20]
+                            top_lines_summary = [
+                                {
+                                    "line": l,
+                                    "count": c,
+                                    "percent": percent[str(l)],
+                                    "bar": bars[str(l)]
+                                }
+                                for l, c in top_lines
+                            ]
+
+                            execution_data.setdefault("heatmap", {})
+                            execution_data["heatmap"].update({
+                                "normalized": normalized,
+                                "percent": percent,
+                                "bars": bars,
+                                "top_lines": top_lines_summary,
+                                "max_count": max_count
+                            })
+                        else:
+                            execution_data.setdefault("heatmap", {})
+                            execution_data["heatmap"].update({
+                                "normalized": {},
+                                "percent": {},
+                                "bars": {},
+                                "top_lines": [],
+                                "max_count": 0
+                            })
+                    except Exception:
+                        # Nunca fallar la API por un error de postprocesado del heatmap
+                        execution_data.setdefault("heatmap", {})
+                        execution_data["heatmap"].update({
+                            "normalized": {},
+                            "percent": {},
+                            "bars": {},
+                            "top_lines": [],
+                            "max_count": 0
+                        })
+
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise AnalysisError(message="Error al ejecutar intérprete trazado", details={"error": str(e)})
+
             return AnalysisResponse(
                 success=True,
                 complexity=complexity_response,
                 procedures=procedures_response,
                 tokens=tokens_response,
                 ast=ast_response,
-                metadata=metadata
+                metadata=metadata,
+                execution=execution_data
             )
             
         except Exception as e:
