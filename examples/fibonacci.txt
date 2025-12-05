@@ -1,22 +1,15 @@
-procedure Fibonacci(n, resultado)
+procedure Fibonacci(n)
 begin
-    if (n <= 1) then
+    if (n ≤ 1) then
     begin
-        resultado 🡨 n
+        return n
     end
     else
     begin
-        a 🡨 0
-        b 🡨 0
-        
-        CALL Fibonacci(n - 1, a)
-        CALL Fibonacci(n - 2, b)
-        
-        resultado 🡨 a + b
+        return call Fibonacci(n - 1) + call Fibonacci(n - 2)
     end
 end
 
 begin
-    resultado 🡨 0
-    CALL Fibonacci(10, resultado)
+    x 🡨 call Fibonacci(10)
 end
