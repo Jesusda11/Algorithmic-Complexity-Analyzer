@@ -132,13 +132,12 @@ class ComplexityAnalyzer:
             if recurrence_relation is None:
                 recurrence_relation = self._build_recurrence_from_recinfo(proc_name, rec_info)
 
-            # AQUÍ ESTÁ LA CLAVE: TODO DENTRO DEL if recurrence_relation:
             if recurrence_relation:
                 solution = self.recurrence_solver.solve(recurrence_relation)
 
-                # GUARDAR PARA EL CLASIFICADOR DE PATRONES (DENTRO DEL if!)
+                # ✅ GUARDAR PARA EL CLASIFICADOR DE PATRONES
                 self.per_procedure_analysis[proc_name] = {
-                    "recursion_info": self.recursion_info[proc_name],
+                    "recursion_info": rec_info,
                     "relation": recurrence_relation,
                     "solution": solution,
                     "complexity": solution.complexity,
@@ -167,16 +166,68 @@ class ComplexityAnalyzer:
                 self.steps.append("")
 
             else:
-                complexity = self._get_recursive_complexity(proc_name, rec_info)
+                complexity_estimate = self._get_recursive_complexity(proc_name, rec_info)
+                
+                # Crear un objeto "solution" simulado para mantener consistencia
+                class FallbackSolution:
+                    def __init__(self, complexity_str):
+                        self.complexity = complexity_str
+                        self.method = "Estimación heurística"
+                        self.explanation = f"No se pudo construir relación de recurrencia precisa. Estimación basada en patrón: {rec_info.depth_pattern}"
+                
+                fallback_solution = FallbackSolution(complexity_estimate)
+                
+                # ✅ LLENAR per_procedure_analysis INCLUSO SIN RELACIÓN
+                self.per_procedure_analysis[proc_name] = {
+                    "recursion_info": rec_info,
+                    "relation": None,  # No hay relación formal
+                    "solution": fallback_solution,
+                    "complexity": complexity_estimate,
+                    "method": "Heurística"
+                }
+                
                 self.steps.append(
                     f"\n  {proc_name}:\n"
                     f"     Tipo: {rec_info.recursion_type}\n"
                     f"     Patrón: {rec_info.depth_pattern}\n"
-                    f"     Complejidad estimada: {complexity}\n"
-                    f"     (No se pudo construir relación de recurrencia precisa)"
+                    f"     Complejidad estimada: {complexity_estimate}\n"
+                    f"     ⚠️ (No se pudo construir relación de recurrencia precisa)"
                 )
 
         self.steps.append("")
+
+    def _get_recursive_complexity(self, proc_name, rec_info) -> str:
+        """
+        Estima la complejidad de un procedimiento recursivo
+        basándose en su patrón (método de respaldo si RecurrenceSolver falla)
+        
+        VERSIÓN MEJORADA con mejor formato
+        """
+        pattern = rec_info.depth_pattern
+        
+        if pattern == 'linear':
+            return "O(n)"
+        
+        elif pattern == 'divide_and_conquer':
+            # Si divide en n/2
+            if rec_info.subproblem == "n/2":
+                if rec_info.call_count == 1:
+                    return "O(log n)"  # Binary search-like
+                elif rec_info.call_count == 2:
+                    if rec_info.has_combining_work:
+                        return "O(n log n)"  # Merge sort-like
+                    else:
+                        return "O(n log n)"  # Divide and conquer típico
+            return "O(n log n)"  # Estimación conservadora
+        
+        elif pattern == 'tree':
+            if rec_info.call_count == 2:
+                return "O(2^n)"  # Fibonacci-like
+            else:
+                return f"O({rec_info.call_count}^n)"
+        
+        else:
+            return "O(n)"
 
     def _build_recurrence_from_recinfo(self, proc_name, rec_info):
         """
@@ -301,7 +352,20 @@ class ComplexityAnalyzer:
         elif stmt_type == "call":
             return self._analyze_call(stmt)
         
+        # ✅ NUEVO: Manejar call_expr
+        elif stmt_type == "call_expr":
+            return self._analyze_call(stmt)
+
+        elif stmt_type == "return":
+            if stmt.get("expr"):
+                return self._analyze_expression_complexity(stmt["expr"])
+            return {"worst": 1, "best": 1, "average": 1}
+        
         elif stmt_type in ("assign", "var_decl", "array_decl", "object_decl"):
+            # ✅ MODIFICADO: Analizar expresión de asignaciones
+            if stmt_type == "assign":
+                expr = stmt.get("expr", {})
+                return self._analyze_expression_complexity(expr)
             return {"worst": 1, "best": 1, "average": 1}
         
         else:
@@ -625,6 +689,43 @@ class ComplexityAnalyzer:
         )
         return {"worst": 1, "best": 1, "average": 1}
 
+    def _analyze_expression_complexity(self, expr) -> Dict:
+        """
+        Analiza la complejidad de una expresión
+        (útil para returns, assigns, etc.)
+        """
+        if not isinstance(expr, dict):
+            return {"worst": 1, "best": 1, "average": 1}
+        
+        expr_type = expr.get("type")
+        
+        # Llamadas a funciones dentro de expresiones
+        if expr_type == "call" or expr_type == "call_expr":
+            return self._analyze_call(expr)
+        
+        # Operaciones binarias: analizar ambos lados
+        elif expr_type == "binop":
+            left = self._analyze_expression_complexity(expr.get("left", {}))
+            right = self._analyze_expression_complexity(expr.get("right", {}))
+            
+            return {
+                "worst": sp.Max(left["worst"], right["worst"]),
+                "best": sp.Max(left["best"], right["best"]),
+                "average": sp.Max(left["average"], right["average"])
+            }
+        
+        # Operaciones unarias
+        elif expr_type == "unop":
+            return self._analyze_expression_complexity(expr.get("operand", {}))
+        
+        # Acceso a arrays/índices
+        elif expr_type == "index":
+            index_expr = expr.get("index", {})
+            return self._analyze_expression_complexity(index_expr)
+        
+        # Todo lo demás es O(1)
+        else:
+            return {"worst": 1, "best": 1, "average": 1}
 
     def _parse_complexity_string(self, complexity_str: str):
         """

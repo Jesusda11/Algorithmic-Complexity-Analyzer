@@ -453,9 +453,22 @@ class RecurrenceSolver:
                         total += count_in_node(stmt)
                     return total
                 
-                # Si es una llamada recursiva
-                elif node_type == "call" and node.get("name") == proc_name:
+                # ✅ ESTE ES EL FIX CRÍTICO: Agregar "call_expr"
+                elif node_type in ("call", "call_expr") and node.get("name") == proc_name:
                     return 1
+                
+                # Si es RETURN con expresión, analizar la expresión
+                elif node_type == "return":
+                    expr = node.get("expr")
+                    if expr:
+                        return count_in_node(expr)
+                    return 0
+                
+                # Si es BINOP (operación binaria), contar en ambos lados
+                elif node_type == "binop":
+                    left = count_in_node(node.get("left", {}))
+                    right = count_in_node(node.get("right", {}))
+                    return left + right
                 
                 # Otros nodos: explorar hijos
                 else:

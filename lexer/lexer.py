@@ -24,6 +24,7 @@ class Lexer:
             "repeat": TokenType.REPEAT,
             "until": TokenType.UNTIL,
             "call": TokenType.CALL,
+            "return": TokenType.RETURN, 
             "class": TokenType.CLASS,
             "null": TokenType.NULL,
             "T": TokenType.TRUE,
