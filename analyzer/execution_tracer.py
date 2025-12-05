@@ -35,6 +35,21 @@ class ExecutionTracer:
     Captura la ejecución línea por línea para visualización en el frontend.
     Genera un árbol de ejecución con estados de variables y call stack.
     """
+    def _serialize_env(env_snapshot: Dict[str, Any], max_len: int = 15) -> Dict[str, str]:
+        """
+        Serializa los valores del ambiente para que sean legibles en el JSON,
+        mostrando el contenido completo de las listas/arrays.
+        """
+        serialized_env = {}
+        for key, value in env_snapshot.items():
+            if isinstance(value, (list, tuple)):
+                # CAMBIO: Muestra el contenido completo del array SIN limitación de max_len
+                serialized_env[key] = f"[{', '.join(map(str, value))}]"
+            else:
+                # Serialización predeterminada
+                serialized_env[key] = str(value)
+        return serialized_env
+        return serialized_env
     
     def __init__(self):
         self.steps: List[ExecutionStep] = []
@@ -48,7 +63,13 @@ class ExecutionTracer:
         }
         self.current_scope = self.scope_tree
         self.scope_stack = [self.scope_tree]
+
+    _serialize_env = staticmethod(_serialize_env) # Hacemos que la función auxiliar esté disponible
         
+    # interpreter/execution_tracer.py (Añadir esta función)
+# --------------------------------------------------------------------------
+    
+
     def capture_step(self, node: Dict, action: str, env_snapshot: Dict, 
                      line: int = None, col: int = None, result=None):
         """Captura un paso de ejecución"""
@@ -57,11 +78,15 @@ class ExecutionTracer:
         if col is None and node:
             col = node.get("col", 0)
             
+        # 🟢 CORRECCIÓN 1: Llama a la serialización
+        serialized_env = self._serialize_env(env_snapshot)
+        
         step = ExecutionStep(
             step_id=self.step_counter,
             node=node,
             action=action,
-            env_snapshot=copy.deepcopy(env_snapshot),
+            # 🟢 CORRECCIÓN 2: Usa el ambiente SERIALIZADO (ya no necesita deepcopy)
+            env_snapshot=serialized_env, 
             call_stack=self.current_call_stack.copy(),
             line=line,
             col=col

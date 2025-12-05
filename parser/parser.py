@@ -306,6 +306,7 @@ class Parser:
     # -----------------------------
 
     def parse_assign(self):
+        start_token = self.peek()
         ident = self.match(TokenType.IDENT)
         target = {"type": "var", "value": ident.value}
 
@@ -322,13 +323,16 @@ class Parser:
 
         self.match(TokenType.ASSIGN)
         expr = self.parse_expression()
-        return {"type": "assign", "target": target, "expr": expr}
+        return {"type": "assign", "target": target, "expr": expr, "line": start_token.line, "col": start_token.col}
     # -----------------------------
     # VAR / ARRAY DECLARATION
 
     def parse_var_declaration(self):
+        
+        start_token = self.peek()
+
         ident = self.match(TokenType.IDENT)
-        node = {"type": "var_decl", "name": ident.value}
+        node = {"type": "var_decl", "name": ident.value, "line": start_token.line, "col": start_token.col}
 
         dims = []
         while self.peek().type == TokenType.LBRACKET:
@@ -345,8 +349,11 @@ class Parser:
             self.match(TokenType.RBRACKET)
 
         if dims:
+        
             node["type"] = "array_decl"
             node["dims"] = dims
+            node["line"] = start_token.line # Mantenemos la línea
+            node["col"] = start_token.col   # Mantenemos la columna
 
         return node
     # -----------------------------
@@ -376,7 +383,9 @@ class Parser:
     # FOR
     # -----------------------------
     def parse_for(self):
-        self.match(TokenType.FOR)
+
+        for_token = self.match(TokenType.FOR)
+
         var = self.match(TokenType.IDENT)
         self.match(TokenType.ASSIGN)
         start = self.parse_expression()
@@ -390,14 +399,18 @@ class Parser:
             "var": var.value,
             "start": start,
             "end": end,
-            "body": body
+            "body": body,
+            "line": for_token.line,  # <-- ¡Añadir!
+            "col": for_token.col
         }
 
     # -----------------------------
     # IF
     # -----------------------------
     def parse_if(self):
-        self.match(TokenType.IF)
+
+        if_token = self.match(TokenType.IF)
+
         self.match(TokenType.LPAREN)
         cond = self.parse_expression()
         self.match(TokenType.RPAREN)
@@ -420,7 +433,9 @@ class Parser:
             "type": "if",
             "cond": cond,
             "then": then_block,
-            "else": else_block
+            "else": else_block,
+            "line": if_token.line,  # <-- ¡Añadir!
+            "col": if_token.col
         }
 
     # -----------------------------
