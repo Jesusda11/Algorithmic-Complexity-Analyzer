@@ -39,14 +39,6 @@ class Parser:
         tok = self.tokens[self.pos]
         self.pos += 1
         return tok
-    
-    def parse_return(self):
-        self.match(TokenType.RETURN)
-        expr = self.parse_expression()
-        return {
-            "type": "return",
-            "expr": expr
-        }
 
     def match(self, type_):
         if self.peek().type == type_:
@@ -232,7 +224,7 @@ class Parser:
             return self.parse_if()
         if tok.type == TokenType.CALL:
             return self.parse_call()
-        if tok.type == TokenType.RETURN:   # <--- agregar esto
+        if tok.type == TokenType.RETURN:
             return self.parse_return()
         if tok.type == TokenType.WHILE:
             return self.parse_while()
@@ -609,6 +601,9 @@ class Parser:
                 }
 
             return self.parse_array_suffix(node)
+        
+        if tok.type == TokenType.CALL:
+            return self.parse_call_expression()
 
         if tok.type == TokenType.LPAREN:
             self.advance()
@@ -784,3 +779,39 @@ class Parser:
 
         self.match(TokenType.RBRACKET)
         return weights
+    
+    def parse_call_expression(self):
+        """
+        Parsea CALL como expresión (para usar en return, asignaciones, operaciones)
+        Ejemplo: return call Fibonacci(n-1)
+                x 🡨 call Suma(a, b)
+        """
+        self.match(TokenType.CALL)
+        proc_name = self.match(TokenType.IDENT)
+        self.match(TokenType.LPAREN)
+
+        args = []
+        if self.peek().type != TokenType.RPAREN:
+            args.append(self.parse_expression())
+            while self.optional(TokenType.COMMA):
+                args.append(self.parse_expression())
+
+        self.match(TokenType.RPAREN)
+
+        return {
+            "type": "call_expr",  # Diferente de "call" para distinguir statement vs expresión
+            "name": proc_name.value,
+            "args": args
+        }
+    
+    def parse_return(self):
+        """Parsea: return [expr]"""
+        self.match(TokenType.RETURN)
+        
+        # Puede ser: return solo, o return expr
+        if self.peek().type in (TokenType.NEWLINE, TokenType.END, TokenType.EOF):
+            return {"type": "return", "expr": None}
+        
+        # Parsear la expresión (puede incluir CALL)
+        expr = self.parse_expression()
+        return {"type": "return", "expr": expr}

@@ -83,7 +83,7 @@ class RecursionDetector:
     def _find_all_calls(self, node) -> List[str]:
         calls: List[str] = []
         if isinstance(node, dict):
-            if node.get("type") == "call":
+            if node.get("type") in ("call", "call_expr"):
                 calls.append(node.get("name"))
             for value in node.values():
                 if isinstance(value, (dict, list)):
@@ -138,7 +138,8 @@ class RecursionDetector:
                 then_tail = self._is_tail_recursive(proc_name, node.get("then"))
                 else_tail = self._is_tail_recursive(proc_name, node.get("else"))
                 return then_tail and else_tail
-            elif t == "call":
+            # ✅ Aceptar tanto "call" como "call_expr"
+            elif t in ("call", "call_expr"):
                 return node.get("name") == proc_name
             else:
                 # traverse children
@@ -186,7 +187,7 @@ class RecursionDetector:
     def _count_recursive_calls_in_body(self, proc_name: str, node) -> int:
         count = 0
         if isinstance(node, dict):
-            if node.get("type") == "call" and node.get("name") == proc_name:
+            if node.get("type") in ("call", "call_expr") and node.get("name") == proc_name:
                 count += 1
             for v in node.values():
                 if isinstance(v, (dict, list)):
@@ -285,7 +286,7 @@ class RecursionDetector:
     def _find_recursive_call_nodes(self, proc_name: str, node) -> List[Dict]:
         nodes: List[Dict] = []
         if isinstance(node, dict):
-            if node.get('type') == 'call' and node.get('name') == proc_name:
+            if node.get('type') in ('call', 'call_expr') and node.get('name') == proc_name:
                 nodes.append(node)
             for v in node.values():
                 if isinstance(v, (dict, list)):
