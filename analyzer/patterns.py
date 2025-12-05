@@ -167,10 +167,10 @@ class PatternClassifier:
             )
 
         # -------------------------------------------------
-        # 4. FIBONACCI NAÏF
+        # 4. FIBONACCI
         # -------------------------------------------------
         if (info.call_count == 2 and
-            info.subproblem == "n-1" and
+            info.subproblem in ("n-1", "n-1,n-2") and
             info.depth_pattern == "tree" and
             ("2^n" in sol.complexity or "^n" in sol.complexity)):
             

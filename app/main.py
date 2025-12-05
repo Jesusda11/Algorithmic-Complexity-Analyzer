@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 import time
 
 # Controladores
-from app.controllers import analysis_controller, health_controller
+from app.controllers import analysis_controller, health_controller,llm_controller
 
 # Configuración
 from app.config import settings
@@ -91,7 +91,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=settings.get_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -104,6 +104,7 @@ app.add_middleware(
 
 app.include_router(analysis_controller.router)
 app.include_router(health_controller.router)
+app.include_router(llm_controller.router) 
 
 
 # =====================================

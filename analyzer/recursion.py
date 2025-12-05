@@ -240,8 +240,12 @@ class RecursionDetector:
                 # Case: subtraction by 1 of the main parameter (n-1)
                 if isinstance(arg, dict) and arg.get('type') == 'binop' and arg.get('op') == 'MINUS':
                     right = arg.get('right', {})
-                    if right.get('type') == 'number' and right.get('value') == 1:
-                        evidence.append('n-1')
+                    if right.get('type') == 'number':
+                        minus_val = right.get('value')
+                        if minus_val == 1:
+                            evidence.append('n-1')
+                        elif minus_val == 2:
+                            evidence.append('n-2')
                 # Case: slice/subarray (heuristic)
                 if isinstance(arg, dict) and arg.get('type') in ('slice', 'subarray'):
                     evidence.append('slice')
@@ -251,6 +255,8 @@ class RecursionDetector:
             return 'n/2'
         if 'slice' in evidence:
             return 'slice'
+        if 'n-1' in evidence and 'n-2' in evidence:
+            return 'n-1,n-2'
         if 'n-1' in evidence and 'n/2' not in evidence:
             return 'n-1'
         return 'unknown'
