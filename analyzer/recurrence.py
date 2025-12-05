@@ -323,7 +323,10 @@ class RecurrenceSolver:
         
         # PASO 3: Analizar trabajo no recursivo (AHORA con soporte para Merge)
         work_complexity = self._analyze_non_recursive_work_v2(proc_ast["body"], proc_name)
-        
+        rec_info = recursion_info[proc_name]
+        if rec_info.subproblem == "n-1,n-2":
+            return None
+            
         return RecurrenceRelation(
             a=num_active_calls,
             b=reduction_factor,

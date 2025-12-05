@@ -1,4 +1,3 @@
-# app/controllers/analysis_controller.py
 """
 Controlador de análisis - Maneja las peticiones HTTP
 """
@@ -143,7 +142,7 @@ async def analyze_code(request: AnalysisRequest):
 )
 async def analyze_file(
     file: UploadFile = File(..., description="Archivo .txt con pseudocódigo"),
-    include_ast: bool = False,
+    include_ast: bool = True,
     include_tokens: bool = False,
     enable_patterns: bool = True
 ):
