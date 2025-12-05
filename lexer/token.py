@@ -66,7 +66,7 @@ class TokenType:
     CEIL = "CEIL"  # ┌
     CEIL_END = "CEIL_END"  # ┐
 
-    FLOOR = "FLOOR"  # └
+    FLOOR = "FLOOR"  # └┘
     FLOOR_END = "FLOOR_END"  # ┘
 
     GRAFO = "GRAFO"

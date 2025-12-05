@@ -206,6 +206,21 @@ class Interpreter:
         else:
             self.exec_block({"type": "block", "body": entry_body}, self.global_env)
 
+# src/interprete.py (Dentro de la clase Interpreter)
+
+    def eval_array_literal(self, node: Dict, env: Environment) -> List[Any]:
+        """Evalúa un nodo AST de tipo 'array_literal' a una lista de Python."""
+        elements = []
+        
+        # Evaluar cada expresión dentro del literal
+        for element_node in node.get("elements", []):
+            # Es fundamental que cada elemento se evalúe recursivamente
+            value = self.eval_expr(element_node, env)
+            elements.append(value)
+            
+        # Devolver una lista de Python, que será el valor del array
+        return elements
+
     def _snapshot_env(self, env: Environment):
         snap = {}
         for k, v in env.vars.items():
@@ -223,7 +238,8 @@ class Interpreter:
     def _before(self, node, env):
         if self.tracer:
             try:
-                self.tracer.before(node, self._snapshot_env(env))
+                # USAR EXPLÍCITAMENTE LA LÍNEA DEL NODO
+                self.tracer.before(node, self._snapshot_env(env), line=node.get("line")) 
             except Exception:
                 pass
         self.trace.append((node, self._snapshot_env(env)))
@@ -749,7 +765,8 @@ class Interpreter:
             return node.get("value")
         if t == "null":
             return None
-
+        if t == "array_literal":
+            return self.eval_array_literal(node, env)
         if t == "var":
             name = node["value"]
             self._count_op(1)
@@ -848,7 +865,8 @@ class Interpreter:
                 return sp.floor(val)
             return math.floor(val)
 
-        if t == "call":
+        if t in ("call", "call_expr"):  # <--- ADAPTACIÓN AQUÍ
+            # exec_call maneja la lógica de ejecución y devuelve el resultado
             return self.exec_call(node, env)
 
         if t in ("binop", "binary"):
@@ -858,7 +876,7 @@ class Interpreter:
             self._count_op(1)
             
             is_symbolic = (self.symbolic and 
-                          (isinstance(left, (sp.Expr, sp.Symbol)) or isinstance(right, (sp.Expr, sp.Symbol))))
+                        (isinstance(left, (sp.Expr, sp.Symbol)) or isinstance(right, (sp.Expr, sp.Symbol))))
             
             if is_symbolic:
                 L = sp.sympify(left) if not isinstance(left, (sp.Expr, sp.Symbol)) else left
@@ -896,6 +914,16 @@ class Interpreter:
                     return sp.Or(L, R)
             
             # Modo concreto
+            
+            # --- ADAPTACIÓN CLAVE PARA ELIMINAR EL TypeError: NoneType and int ---
+            # Si una variable no fue inicializada, su valor es None. En operaciones matemáticas, 
+            # asumimos que debe comportarse como 0.
+            if left is None:
+                left = 0
+            if right is None:
+                right = 0
+            # ----------------------------------------------------------------------
+            
             if op in ("PLUS", "PLUS_TOKEN", "PLUS_OP"):
                 return left + right
             if op in ("MINUS", "MINUS_TOKEN", "MINUS_OP"):

@@ -105,6 +105,8 @@ class AnalysisResponse(BaseModel):
     # Información adicional (opcional)
     tokens: Optional[List[TokenInfo]] = None
     ast: Optional[Dict[str, Any]] = None
+    # Ejecución trazada (opcional) - formato optimizado para el frontend
+    execution: Optional[Dict[str, Any]] = None
     
     # Metadata
     metadata: Dict[str, Any] = Field(

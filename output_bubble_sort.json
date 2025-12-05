@@ -1,0 +1,1903 @@
+{
+  "success": true,
+  "execution": {
+    "timeline": [
+      {
+        "step": 0,
+        "line": 14,
+        "col": 1,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "5"
+        },
+        "call_stack": [
+          "<main>"
+        ],
+        "scope_depth": 1
+      },
+      {
+        "step": 1,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "5"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci"
+        ],
+        "scope_depth": 2
+      },
+      {
+        "step": 2,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "4"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 3
+      },
+      {
+        "step": 3,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "3"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 4,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "2"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 5,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 6
+      },
+      {
+        "step": 6,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 6
+      },
+      {
+        "step": 7,
+        "line": 9,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "2",
+          "a": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 8,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 6
+      },
+      {
+        "step": 9,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 6
+      },
+      {
+        "step": 10,
+        "line": 10,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "2",
+          "a": "1",
+          "b": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 11,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "2",
+          "a": "1",
+          "b": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 12,
+        "line": 9,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "3",
+          "a": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 13,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 14,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 15,
+        "line": 10,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "3",
+          "a": "1",
+          "b": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 16,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "3",
+          "a": "1",
+          "b": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 17,
+        "line": 9,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "4",
+          "a": "2"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 3
+      },
+      {
+        "step": 18,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "2"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 19,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 20,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 21,
+        "line": 9,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "2",
+          "a": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 22,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 23,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 24,
+        "line": 10,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "2",
+          "a": "1",
+          "b": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 25,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "2",
+          "a": "1",
+          "b": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 26,
+        "line": 10,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "4",
+          "a": "2",
+          "b": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 3
+      },
+      {
+        "step": 27,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "4",
+          "a": "2",
+          "b": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 3
+      },
+      {
+        "step": 28,
+        "line": 9,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "5",
+          "a": "3"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci"
+        ],
+        "scope_depth": 2
+      },
+      {
+        "step": 29,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "3"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 3
+      },
+      {
+        "step": 30,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "2"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 31,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 32,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 33,
+        "line": 9,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "2",
+          "a": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 34,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 35,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 5
+      },
+      {
+        "step": 36,
+        "line": 10,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "2",
+          "a": "1",
+          "b": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 37,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "2",
+          "a": "1",
+          "b": "0"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 38,
+        "line": 9,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "3",
+          "a": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 3
+      },
+      {
+        "step": 39,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 40,
+        "line": 4,
+        "col": 5,
+        "action": "exit_if",
+        "node_type": "if",
+        "variables": {
+          "n": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 4
+      },
+      {
+        "step": 41,
+        "line": 10,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "3",
+          "a": "1",
+          "b": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 3
+      },
+      {
+        "step": 42,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "3",
+          "a": "1",
+          "b": "1"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci",
+          "fibonacci"
+        ],
+        "scope_depth": 3
+      },
+      {
+        "step": 43,
+        "line": 10,
+        "col": 5,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "5",
+          "a": "3",
+          "b": "2"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci"
+        ],
+        "scope_depth": 2
+      },
+      {
+        "step": 44,
+        "line": 0,
+        "col": 0,
+        "action": "exit_return",
+        "node_type": "return",
+        "variables": {
+          "n": "5",
+          "a": "3",
+          "b": "2"
+        },
+        "call_stack": [
+          "<main>",
+          "fibonacci"
+        ],
+        "scope_depth": 2
+      },
+      {
+        "step": 45,
+        "line": 15,
+        "col": 1,
+        "action": "exit_assign",
+        "node_type": "assign",
+        "variables": {
+          "n": "5",
+          "resultado": "5"
+        },
+        "call_stack": [
+          "<main>"
+        ],
+        "scope_depth": 1
+      }
+    ],
+    "scope_tree": {
+      "name": "<main>",
+      "type": "main",
+      "children": [
+        {
+          "name": "fibonacci",
+          "type": "procedure",
+          "node": {
+            "type": "call_expr",
+            "name": "fibonacci",
+            "args": [
+              {
+                "type": "var",
+                "value": "n"
+              }
+            ]
+          },
+          "children": [
+            {
+              "name": "if",
+              "type": "if",
+              "node": {
+                "type": "if",
+                "cond": {
+                  "type": "binop",
+                  "op": "LE",
+                  "left": {
+                    "type": "var",
+                    "value": "n"
+                  },
+                  "right": {
+                    "type": "number",
+                    "value": 1
+                  }
+                },
+                "then": {
+                  "type": "block",
+                  "body": [
+                    {
+                      "type": "return",
+                      "expr": {
+                        "type": "var",
+                        "value": "n"
+                      }
+                    }
+                  ]
+                },
+                "else": null,
+                "line": 4,
+                "col": 5
+              },
+              "children": [],
+              "steps": [
+                1
+              ],
+              "start_step": 1,
+              "end_step": 1
+            },
+            {
+              "name": "fibonacci",
+              "type": "procedure",
+              "node": {
+                "type": "call_expr",
+                "name": "fibonacci",
+                "args": [
+                  {
+                    "type": "binop",
+                    "op": "MINUS",
+                    "left": {
+                      "type": "var",
+                      "value": "n"
+                    },
+                    "right": {
+                      "type": "number",
+                      "value": 1
+                    }
+                  }
+                ]
+              },
+              "children": [
+                {
+                  "name": "if",
+                  "type": "if",
+                  "node": {
+                    "type": "if",
+                    "cond": {
+                      "type": "binop",
+                      "op": "LE",
+                      "left": {
+                        "type": "var",
+                        "value": "n"
+                      },
+                      "right": {
+                        "type": "number",
+                        "value": 1
+                      }
+                    },
+                    "then": {
+                      "type": "block",
+                      "body": [
+                        {
+                          "type": "return",
+                          "expr": {
+                            "type": "var",
+                            "value": "n"
+                          }
+                        }
+                      ]
+                    },
+                    "else": null,
+                    "line": 4,
+                    "col": 5
+                  },
+                  "children": [],
+                  "steps": [
+                    2
+                  ],
+                  "start_step": 2,
+                  "end_step": 2
+                },
+                {
+                  "name": "fibonacci",
+                  "type": "procedure",
+                  "node": {
+                    "type": "call_expr",
+                    "name": "fibonacci",
+                    "args": [
+                      {
+                        "type": "binop",
+                        "op": "MINUS",
+                        "left": {
+                          "type": "var",
+                          "value": "n"
+                        },
+                        "right": {
+                          "type": "number",
+                          "value": 1
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "name": "if",
+                      "type": "if",
+                      "node": {
+                        "type": "if",
+                        "cond": {
+                          "type": "binop",
+                          "op": "LE",
+                          "left": {
+                            "type": "var",
+                            "value": "n"
+                          },
+                          "right": {
+                            "type": "number",
+                            "value": 1
+                          }
+                        },
+                        "then": {
+                          "type": "block",
+                          "body": [
+                            {
+                              "type": "return",
+                              "expr": {
+                                "type": "var",
+                                "value": "n"
+                              }
+                            }
+                          ]
+                        },
+                        "else": null,
+                        "line": 4,
+                        "col": 5
+                      },
+                      "children": [],
+                      "steps": [
+                        3
+                      ],
+                      "start_step": 3,
+                      "end_step": 3
+                    },
+                    {
+                      "name": "fibonacci",
+                      "type": "procedure",
+                      "node": {
+                        "type": "call_expr",
+                        "name": "fibonacci",
+                        "args": [
+                          {
+                            "type": "binop",
+                            "op": "MINUS",
+                            "left": {
+                              "type": "var",
+                              "value": "n"
+                            },
+                            "right": {
+                              "type": "number",
+                              "value": 1
+                            }
+                          }
+                        ]
+                      },
+                      "children": [
+                        {
+                          "name": "if",
+                          "type": "if",
+                          "node": {
+                            "type": "if",
+                            "cond": {
+                              "type": "binop",
+                              "op": "LE",
+                              "left": {
+                                "type": "var",
+                                "value": "n"
+                              },
+                              "right": {
+                                "type": "number",
+                                "value": 1
+                              }
+                            },
+                            "then": {
+                              "type": "block",
+                              "body": [
+                                {
+                                  "type": "return",
+                                  "expr": {
+                                    "type": "var",
+                                    "value": "n"
+                                  }
+                                }
+                              ]
+                            },
+                            "else": null,
+                            "line": 4,
+                            "col": 5
+                          },
+                          "children": [],
+                          "steps": [
+                            4
+                          ],
+                          "start_step": 4,
+                          "end_step": 4
+                        },
+                        {
+                          "name": "fibonacci",
+                          "type": "procedure",
+                          "node": {
+                            "type": "call_expr",
+                            "name": "fibonacci",
+                            "args": [
+                              {
+                                "type": "binop",
+                                "op": "MINUS",
+                                "left": {
+                                  "type": "var",
+                                  "value": "n"
+                                },
+                                "right": {
+                                  "type": "number",
+                                  "value": 1
+                                }
+                              }
+                            ]
+                          },
+                          "children": [
+                            {
+                              "name": "if",
+                              "type": "if",
+                              "node": {
+                                "type": "if",
+                                "cond": {
+                                  "type": "binop",
+                                  "op": "LE",
+                                  "left": {
+                                    "type": "var",
+                                    "value": "n"
+                                  },
+                                  "right": {
+                                    "type": "number",
+                                    "value": 1
+                                  }
+                                },
+                                "then": {
+                                  "type": "block",
+                                  "body": [
+                                    {
+                                      "type": "return",
+                                      "expr": {
+                                        "type": "var",
+                                        "value": "n"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "else": null,
+                                "line": 4,
+                                "col": 5
+                              },
+                              "children": [],
+                              "steps": [
+                                5,
+                                6
+                              ],
+                              "start_step": 5,
+                              "end_step": 6
+                            }
+                          ],
+                          "steps": [],
+                          "start_step": 5,
+                          "end_step": 6
+                        },
+                        {
+                          "name": "fibonacci",
+                          "type": "procedure",
+                          "node": {
+                            "type": "call_expr",
+                            "name": "fibonacci",
+                            "args": [
+                              {
+                                "type": "binop",
+                                "op": "MINUS",
+                                "left": {
+                                  "type": "var",
+                                  "value": "n"
+                                },
+                                "right": {
+                                  "type": "number",
+                                  "value": 2
+                                }
+                              }
+                            ]
+                          },
+                          "children": [
+                            {
+                              "name": "if",
+                              "type": "if",
+                              "node": {
+                                "type": "if",
+                                "cond": {
+                                  "type": "binop",
+                                  "op": "LE",
+                                  "left": {
+                                    "type": "var",
+                                    "value": "n"
+                                  },
+                                  "right": {
+                                    "type": "number",
+                                    "value": 1
+                                  }
+                                },
+                                "then": {
+                                  "type": "block",
+                                  "body": [
+                                    {
+                                      "type": "return",
+                                      "expr": {
+                                        "type": "var",
+                                        "value": "n"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "else": null,
+                                "line": 4,
+                                "col": 5
+                              },
+                              "children": [],
+                              "steps": [
+                                8,
+                                9
+                              ],
+                              "start_step": 8,
+                              "end_step": 9
+                            }
+                          ],
+                          "steps": [],
+                          "start_step": 8,
+                          "end_step": 9
+                        }
+                      ],
+                      "steps": [
+                        7,
+                        10,
+                        11
+                      ],
+                      "start_step": 4,
+                      "end_step": 11
+                    },
+                    {
+                      "name": "fibonacci",
+                      "type": "procedure",
+                      "node": {
+                        "type": "call_expr",
+                        "name": "fibonacci",
+                        "args": [
+                          {
+                            "type": "binop",
+                            "op": "MINUS",
+                            "left": {
+                              "type": "var",
+                              "value": "n"
+                            },
+                            "right": {
+                              "type": "number",
+                              "value": 2
+                            }
+                          }
+                        ]
+                      },
+                      "children": [
+                        {
+                          "name": "if",
+                          "type": "if",
+                          "node": {
+                            "type": "if",
+                            "cond": {
+                              "type": "binop",
+                              "op": "LE",
+                              "left": {
+                                "type": "var",
+                                "value": "n"
+                              },
+                              "right": {
+                                "type": "number",
+                                "value": 1
+                              }
+                            },
+                            "then": {
+                              "type": "block",
+                              "body": [
+                                {
+                                  "type": "return",
+                                  "expr": {
+                                    "type": "var",
+                                    "value": "n"
+                                  }
+                                }
+                              ]
+                            },
+                            "else": null,
+                            "line": 4,
+                            "col": 5
+                          },
+                          "children": [],
+                          "steps": [
+                            13,
+                            14
+                          ],
+                          "start_step": 13,
+                          "end_step": 14
+                        }
+                      ],
+                      "steps": [],
+                      "start_step": 13,
+                      "end_step": 14
+                    }
+                  ],
+                  "steps": [
+                    12,
+                    15,
+                    16
+                  ],
+                  "start_step": 3,
+                  "end_step": 16
+                },
+                {
+                  "name": "fibonacci",
+                  "type": "procedure",
+                  "node": {
+                    "type": "call_expr",
+                    "name": "fibonacci",
+                    "args": [
+                      {
+                        "type": "binop",
+                        "op": "MINUS",
+                        "left": {
+                          "type": "var",
+                          "value": "n"
+                        },
+                        "right": {
+                          "type": "number",
+                          "value": 2
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "name": "if",
+                      "type": "if",
+                      "node": {
+                        "type": "if",
+                        "cond": {
+                          "type": "binop",
+                          "op": "LE",
+                          "left": {
+                            "type": "var",
+                            "value": "n"
+                          },
+                          "right": {
+                            "type": "number",
+                            "value": 1
+                          }
+                        },
+                        "then": {
+                          "type": "block",
+                          "body": [
+                            {
+                              "type": "return",
+                              "expr": {
+                                "type": "var",
+                                "value": "n"
+                              }
+                            }
+                          ]
+                        },
+                        "else": null,
+                        "line": 4,
+                        "col": 5
+                      },
+                      "children": [],
+                      "steps": [
+                        18
+                      ],
+                      "start_step": 18,
+                      "end_step": 18
+                    },
+                    {
+                      "name": "fibonacci",
+                      "type": "procedure",
+                      "node": {
+                        "type": "call_expr",
+                        "name": "fibonacci",
+                        "args": [
+                          {
+                            "type": "binop",
+                            "op": "MINUS",
+                            "left": {
+                              "type": "var",
+                              "value": "n"
+                            },
+                            "right": {
+                              "type": "number",
+                              "value": 1
+                            }
+                          }
+                        ]
+                      },
+                      "children": [
+                        {
+                          "name": "if",
+                          "type": "if",
+                          "node": {
+                            "type": "if",
+                            "cond": {
+                              "type": "binop",
+                              "op": "LE",
+                              "left": {
+                                "type": "var",
+                                "value": "n"
+                              },
+                              "right": {
+                                "type": "number",
+                                "value": 1
+                              }
+                            },
+                            "then": {
+                              "type": "block",
+                              "body": [
+                                {
+                                  "type": "return",
+                                  "expr": {
+                                    "type": "var",
+                                    "value": "n"
+                                  }
+                                }
+                              ]
+                            },
+                            "else": null,
+                            "line": 4,
+                            "col": 5
+                          },
+                          "children": [],
+                          "steps": [
+                            19,
+                            20
+                          ],
+                          "start_step": 19,
+                          "end_step": 20
+                        }
+                      ],
+                      "steps": [],
+                      "start_step": 19,
+                      "end_step": 20
+                    },
+                    {
+                      "name": "fibonacci",
+                      "type": "procedure",
+                      "node": {
+                        "type": "call_expr",
+                        "name": "fibonacci",
+                        "args": [
+                          {
+                            "type": "binop",
+                            "op": "MINUS",
+                            "left": {
+                              "type": "var",
+                              "value": "n"
+                            },
+                            "right": {
+                              "type": "number",
+                              "value": 2
+                            }
+                          }
+                        ]
+                      },
+                      "children": [
+                        {
+                          "name": "if",
+                          "type": "if",
+                          "node": {
+                            "type": "if",
+                            "cond": {
+                              "type": "binop",
+                              "op": "LE",
+                              "left": {
+                                "type": "var",
+                                "value": "n"
+                              },
+                              "right": {
+                                "type": "number",
+                                "value": 1
+                              }
+                            },
+                            "then": {
+                              "type": "block",
+                              "body": [
+                                {
+                                  "type": "return",
+                                  "expr": {
+                                    "type": "var",
+                                    "value": "n"
+                                  }
+                                }
+                              ]
+                            },
+                            "else": null,
+                            "line": 4,
+                            "col": 5
+                          },
+                          "children": [],
+                          "steps": [
+                            22,
+                            23
+                          ],
+                          "start_step": 22,
+                          "end_step": 23
+                        }
+                      ],
+                      "steps": [],
+                      "start_step": 22,
+                      "end_step": 23
+                    }
+                  ],
+                  "steps": [
+                    21,
+                    24,
+                    25
+                  ],
+                  "start_step": 18,
+                  "end_step": 25
+                }
+              ],
+              "steps": [
+                17,
+                26,
+                27
+              ],
+              "start_step": 2,
+              "end_step": 27
+            },
+            {
+              "name": "fibonacci",
+              "type": "procedure",
+              "node": {
+                "type": "call_expr",
+                "name": "fibonacci",
+                "args": [
+                  {
+                    "type": "binop",
+                    "op": "MINUS",
+                    "left": {
+                      "type": "var",
+                      "value": "n"
+                    },
+                    "right": {
+                      "type": "number",
+                      "value": 2
+                    }
+                  }
+                ]
+              },
+              "children": [
+                {
+                  "name": "if",
+                  "type": "if",
+                  "node": {
+                    "type": "if",
+                    "cond": {
+                      "type": "binop",
+                      "op": "LE",
+                      "left": {
+                        "type": "var",
+                        "value": "n"
+                      },
+                      "right": {
+                        "type": "number",
+                        "value": 1
+                      }
+                    },
+                    "then": {
+                      "type": "block",
+                      "body": [
+                        {
+                          "type": "return",
+                          "expr": {
+                            "type": "var",
+                            "value": "n"
+                          }
+                        }
+                      ]
+                    },
+                    "else": null,
+                    "line": 4,
+                    "col": 5
+                  },
+                  "children": [],
+                  "steps": [
+                    29
+                  ],
+                  "start_step": 29,
+                  "end_step": 29
+                },
+                {
+                  "name": "fibonacci",
+                  "type": "procedure",
+                  "node": {
+                    "type": "call_expr",
+                    "name": "fibonacci",
+                    "args": [
+                      {
+                        "type": "binop",
+                        "op": "MINUS",
+                        "left": {
+                          "type": "var",
+                          "value": "n"
+                        },
+                        "right": {
+                          "type": "number",
+                          "value": 1
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "name": "if",
+                      "type": "if",
+                      "node": {
+                        "type": "if",
+                        "cond": {
+                          "type": "binop",
+                          "op": "LE",
+                          "left": {
+                            "type": "var",
+                            "value": "n"
+                          },
+                          "right": {
+                            "type": "number",
+                            "value": 1
+                          }
+                        },
+                        "then": {
+                          "type": "block",
+                          "body": [
+                            {
+                              "type": "return",
+                              "expr": {
+                                "type": "var",
+                                "value": "n"
+                              }
+                            }
+                          ]
+                        },
+                        "else": null,
+                        "line": 4,
+                        "col": 5
+                      },
+                      "children": [],
+                      "steps": [
+                        30
+                      ],
+                      "start_step": 30,
+                      "end_step": 30
+                    },
+                    {
+                      "name": "fibonacci",
+                      "type": "procedure",
+                      "node": {
+                        "type": "call_expr",
+                        "name": "fibonacci",
+                        "args": [
+                          {
+                            "type": "binop",
+                            "op": "MINUS",
+                            "left": {
+                              "type": "var",
+                              "value": "n"
+                            },
+                            "right": {
+                              "type": "number",
+                              "value": 1
+                            }
+                          }
+                        ]
+                      },
+                      "children": [
+                        {
+                          "name": "if",
+                          "type": "if",
+                          "node": {
+                            "type": "if",
+                            "cond": {
+                              "type": "binop",
+                              "op": "LE",
+                              "left": {
+                                "type": "var",
+                                "value": "n"
+                              },
+                              "right": {
+                                "type": "number",
+                                "value": 1
+                              }
+                            },
+                            "then": {
+                              "type": "block",
+                              "body": [
+                                {
+                                  "type": "return",
+                                  "expr": {
+                                    "type": "var",
+                                    "value": "n"
+                                  }
+                                }
+                              ]
+                            },
+                            "else": null,
+                            "line": 4,
+                            "col": 5
+                          },
+                          "children": [],
+                          "steps": [
+                            31,
+                            32
+                          ],
+                          "start_step": 31,
+                          "end_step": 32
+                        }
+                      ],
+                      "steps": [],
+                      "start_step": 31,
+                      "end_step": 32
+                    },
+                    {
+                      "name": "fibonacci",
+                      "type": "procedure",
+                      "node": {
+                        "type": "call_expr",
+                        "name": "fibonacci",
+                        "args": [
+                          {
+                            "type": "binop",
+                            "op": "MINUS",
+                            "left": {
+                              "type": "var",
+                              "value": "n"
+                            },
+                            "right": {
+                              "type": "number",
+                              "value": 2
+                            }
+                          }
+                        ]
+                      },
+                      "children": [
+                        {
+                          "name": "if",
+                          "type": "if",
+                          "node": {
+                            "type": "if",
+                            "cond": {
+                              "type": "binop",
+                              "op": "LE",
+                              "left": {
+                                "type": "var",
+                                "value": "n"
+                              },
+                              "right": {
+                                "type": "number",
+                                "value": 1
+                              }
+                            },
+                            "then": {
+                              "type": "block",
+                              "body": [
+                                {
+                                  "type": "return",
+                                  "expr": {
+                                    "type": "var",
+                                    "value": "n"
+                                  }
+                                }
+                              ]
+                            },
+                            "else": null,
+                            "line": 4,
+                            "col": 5
+                          },
+                          "children": [],
+                          "steps": [
+                            34,
+                            35
+                          ],
+                          "start_step": 34,
+                          "end_step": 35
+                        }
+                      ],
+                      "steps": [],
+                      "start_step": 34,
+                      "end_step": 35
+                    }
+                  ],
+                  "steps": [
+                    33,
+                    36,
+                    37
+                  ],
+                  "start_step": 30,
+                  "end_step": 37
+                },
+                {
+                  "name": "fibonacci",
+                  "type": "procedure",
+                  "node": {
+                    "type": "call_expr",
+                    "name": "fibonacci",
+                    "args": [
+                      {
+                        "type": "binop",
+                        "op": "MINUS",
+                        "left": {
+                          "type": "var",
+                          "value": "n"
+                        },
+                        "right": {
+                          "type": "number",
+                          "value": 2
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "name": "if",
+                      "type": "if",
+                      "node": {
+                        "type": "if",
+                        "cond": {
+                          "type": "binop",
+                          "op": "LE",
+                          "left": {
+                            "type": "var",
+                            "value": "n"
+                          },
+                          "right": {
+                            "type": "number",
+                            "value": 1
+                          }
+                        },
+                        "then": {
+                          "type": "block",
+                          "body": [
+                            {
+                              "type": "return",
+                              "expr": {
+                                "type": "var",
+                                "value": "n"
+                              }
+                            }
+                          ]
+                        },
+                        "else": null,
+                        "line": 4,
+                        "col": 5
+                      },
+                      "children": [],
+                      "steps": [
+                        39,
+                        40
+                      ],
+                      "start_step": 39,
+                      "end_step": 40
+                    }
+                  ],
+                  "steps": [],
+                  "start_step": 39,
+                  "end_step": 40
+                }
+              ],
+              "steps": [
+                38,
+                41,
+                42
+              ],
+              "start_step": 29,
+              "end_step": 42
+            }
+          ],
+          "steps": [
+            28,
+            43,
+            44
+          ],
+          "start_step": 1,
+          "end_step": 44
+        }
+      ],
+      "steps": [
+        0,
+        45
+      ]
+    },
+    "total_steps": 46,
+    "line_heatmap": {
+      "14": 1,
+      "4": 15,
+      "9": 7,
+      "10": 7,
+      "15": 1
+    },
+    "variable_lifetimes": {
+      "n": {
+        "first_seen": 0,
+        "last_seen": 45,
+        "scope": "<main>"
+      },
+      "a": {
+        "first_seen": 7,
+        "last_seen": 44,
+        "scope": "fibonacci"
+      },
+      "b": {
+        "first_seen": 10,
+        "last_seen": 44,
+        "scope": "fibonacci"
+      },
+      "resultado": {
+        "first_seen": 45,
+        "last_seen": 45,
+        "scope": "<main>"
+      }
+    }
+  },
+  "metrics": {
+    "total_operations": 163,
+    "loops": [],
+    "recursion": {}
+  }
+}

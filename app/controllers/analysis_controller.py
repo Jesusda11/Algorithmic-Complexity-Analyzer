@@ -80,7 +80,8 @@ async def analyze_code(request: AnalysisRequest):
             code=request.code,
             include_ast=request.include_ast,
             include_tokens=request.include_tokens,
-            enable_patterns=request.enable_patterns
+            enable_patterns=request.enable_patterns,
+            enable_tracing=request.enable_tracing
         )
         
         # Agregar metadata de tiempo

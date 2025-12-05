@@ -433,6 +433,7 @@ class Parser:
     # -----------------------------
     # WHILE
     # -----------------------------
+
     def parse_while(self):
         self.match(TokenType.WHILE)
         self.match(TokenType.LPAREN)
@@ -542,6 +543,11 @@ class Parser:
     def parse_factor(self):
         tok = self.peek()
 
+        # 👈 CAMBIO 1: NUEVA REGLA para Array Literal: [1, 2, 3]
+        if tok.type == TokenType.LBRACKET:
+            # Si encontramos '[', llamamos a la función de parsing de array
+            return self.parse_array_literal()
+        
         if tok.type == TokenType.MINUS:
             self.advance()  # Consumir el '-'
             
@@ -646,6 +652,69 @@ class Parser:
     # -----------------------------
     # ARRAY ACCESS
     # -----------------------------
+
+    def parse_array_literal(self):
+        """
+        Parsea un literal de array: [expr, expr, ...]
+        Ejemplo: [1, 2+3, CALL Suma(x)]
+        """
+        # Aseguramos que el token actual es '['
+        self.match(TokenType.LBRACKET) 
+        
+        elements = []
+        
+        # Verificar si no es un array vacío '[]'
+        if self.peek().type != TokenType.RBRACKET:
+            # Parsear el primer elemento
+            elements.append(self.parse_expression())
+            
+            # Parsear los elementos subsiguientes separados por coma
+            while self.optional(TokenType.COMMA):
+                elements.append(self.parse_expression())
+        
+        # Aseguramos que el token actual es ']'
+        self.match(TokenType.RBRACKET) 
+        
+        # Devolver un nuevo nodo AST
+        return {
+            "type": "array_literal",
+            "elements": elements,
+            "line": self.tokens[self.pos - 1].line, # O la línea del '['
+            "col": self.tokens[self.pos - 1].col
+        }
+    
+    # src/parser.py (Dentro de la clase Parser)
+
+    def parse_primary_expression(self):
+        # 1. 👈 NUEVA REGLA: Verificar si es un literal de array [1, 2, 3]
+        if self.peek().type == TokenType.LBRACKET:
+            return self.parse_array_literal()
+
+        # 2. Manejo de números, booleanos, null, etc.
+        if self.peek().type in (TokenType.NUMBER, TokenType.STRING, TokenType.TRUE, TokenType.FALSE, TokenType.NULL):
+            tok = self.advance()
+            return {"type": tok.type.name.lower(), "value": tok.value, "line": tok.line, "col": tok.col}
+
+        # 3. Manejo de expresiones entre paréntesis
+        if self.optional(TokenType.LPAREN):
+            expr = self.parse_expression()
+            self.match(TokenType.RPAREN)
+            return expr
+            
+        # 4. Manejo de variables y llamadas a funciones/arrays
+        if self.peek().type == TokenType.IDENT:
+            node = self.parse_variable_access() # Maneja A, A[i], A[i][j]
+            return node
+            
+        # 5. Manejo de CALL como expresión
+        if self.peek().type == TokenType.CALL:
+            return self.parse_call_expression()
+            
+        # ... Resto de tu lógica ...
+        
+        # Si no se encuentra ninguna expresión primaria esperada
+        raise Exception(f"Expresión primaria inesperada en línea {self.peek().line}")
+    
     def parse_array_suffix(self, base):
         while self.optional(TokenType.LBRACKET):
             start = self.parse_expression()
